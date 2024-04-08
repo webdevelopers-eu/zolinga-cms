@@ -1,0 +1,81 @@
+{
+  "name": "Zolinga CMS",
+  "version": "1.0",
+  "description": "File-based CMS.",
+  "authors": [
+    "Daniel Sevcik <danny@zolinga.net>"
+  ],
+  "attributes": {},
+  "listen": [
+    {
+      "description": "CMS Service.",
+      "service": "cms",
+      "class": "\\Zolinga\\Cms\\PageServer",
+      "origin": [
+        "*"
+      ]
+    }, 
+    {
+      "description": "CMS server.",
+      "event": "system:content",
+      "class": "\\Zolinga\\Cms\\PageServer",
+      "method": "onContent",
+      "origin": [
+        "remote",
+        "cli"
+      ]
+    }, 
+    {
+      "description": "CMS Tree representation.",
+      "service": "cmsTree",
+      "class": "\\Zolinga\\Cms\\Tree\\TreeRoot",
+      "origin": [
+        "*"
+      ]
+    },
+    {
+      "description": "CMS page menu.",
+      "event": "cms:content:cms-menu",
+      "class": "\\Zolinga\\Cms\\PageMenu",
+      "method": "onCmsMenu",
+      "origin": [
+        "internal"
+      ]
+    },
+    {
+      "description": "Adds CMS Elements Article to :ref WIKI page.",
+      "event": "system:wiki:ref:discovery",
+      "class": "\\Zolinga\\Cms\\WikiCmsElements",
+      "method": "onWikiRefDiscovery",
+      "origin": [
+        "internal"
+      ]
+    }
+  ],
+  "emit": [
+    {
+      "description": "Parse custom HTML element.",
+      "event": "cms:content:*",
+      "class": "\\Zolinga\\Cms\\Events\\ContentElementEvent",
+      "origin": [
+        "internal"
+      ]
+    }
+  ],
+  "webComponents": [
+    {
+      "tag": "cms-menu",
+      "description": "CMS menu.",
+      "module": "web-components/cms-menu/cms-menu.js"
+    }
+  ],
+  "autoload": {
+    "Zolinga\\Cms\\": "src/"
+  },
+  "config": {
+    "cms": {
+      "# menuCache": "false: disalbe caching of menu structure. All .html files will be scanned on each request. Only for development.",
+      "menuCache": true
+    }
+  }
+}
