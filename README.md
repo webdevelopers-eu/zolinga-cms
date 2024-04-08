@@ -1,8 +1,14 @@
+**This repository holds the  [Zolinga](https://github.com/webdevelopers-eu/zolinga) module.**
+
+Please refer to [Zolinga PHP Framework](https://github.com/webdevelopers-eu/zolinga) for more information. Also refer to inbuilt [Zolinga WIKI](https://github.com/webdevelopers-eu/zolinga/blob/main/system/data/zolinga-wiki-screenshot.png) that comes with the your Zolinga framework installation for most up-to-date information.
+
 # Zolinga CMS
+
+Note: This is a fresh module and may need additional testing. Please report any issues you find.
 
 ## Introduction
 
-Zolinga CMS is a database-less content management system that is designed to be easy to use and easy to extend.
+Zolinga CMS is a PHP database-less content management system that is designed to be easy to use and easy to extend.
 
 Features:
 
@@ -16,12 +22,24 @@ Features:
 
 ## But... why?
 
+In the realm of modern web applications, traditional CMS systems are beginning to lose their significance. Robust CMS platforms are being supplanted by single-page applications boasting dynamic interfaces, components, and streamlined backend content databases.
+
+This module responds to the evolving landscape. For the project I developed it for, the need for a conventional CMS is virtually non-existent. The primary component is a single-page, fully-fledged administration interface that operates independently of traditional content storage methods commonly associated with full-blown CMS platforms. As a result, I sought something simple yet powerful to bootstrap all frontend elements required. Something traditional, devoid of unnecessary features, primarily for raw SEO purposes, customer-targeted design features, and other eye candies, terms and conditions, and other static textual content in multiple languages. The intended use is also for mass-managed microsites.
+
 It is a hybrid between a plain static HTML files and a fullblown database-driven CMS. It is designed to be easy to use and easy to extend. Able to support simplified page templates and dynamic elements.
 
 The use cases are endless. You can use it for a simple blog, a small different-design microsites that have content updated
 using FTP, a personal site with custom contact form written in PHP...
 
 Really endless. It is up to you. I just provide the shovel. You find the gold.
+
+## Installation
+
+First you need to install the Zolinga framework (1 minute work under ideal conditions). See [Zolinga PHP Framework](https://github.com/webdevelopers-eu/zolinga). Then you can install the Zolinga CMS module by running this command in the root of your Zolinga installation:
+
+```bash
+$ ./bin/zolinga install --module=zolinga-cms
+```
 
 ## Defining a Page Tree
 

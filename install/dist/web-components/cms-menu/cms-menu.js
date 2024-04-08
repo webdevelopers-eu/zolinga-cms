@@ -3,7 +3,11 @@ import HamburgerMenu from '/dist/zolinga-commons/web-components/hamburger-menu/h
 export default class CMSMenu extends HamburgerMenu {
     constructor() {
         super();
+        this.ready(this.#init());
+    }
+
+    async #init() {
         this.classList.add('cms-menu');
-        this.dataset.ready = 'true';
+        this.classList.remove('hidden');
     }
 }

@@ -60,6 +60,7 @@ class PageMenu implements ListenerInterface
         $wrapper = $event->output->ownerDocument->createElement('cms-menu');
         $wrapper->appendChild($menu);
         $wrapper->setAttribute('render', 'client');
+        $wrapper->setAttribute('hidden', 'true'); // JS hamburger-menu.js removes it 
         foreach(['id', 'class'] as $attr) {
             if ($event->input->hasAttribute($attr)) {
                 $wrapper->setAttribute($attr, $event->input->getAttribute($attr));
