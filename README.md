@@ -1,15 +1,8 @@
-**This repository holds the  [Zolinga](https://github.com/webdevelopers-eu/zolinga) module.**
-
-Please refer to [Zolinga PHP Framework](https://github.com/webdevelopers-eu/zolinga) for more information. Also refer to inbuilt [Zolinga WIKI](https://github.com/webdevelopers-eu/zolinga/blob/main/system/data/zolinga-wiki-screenshot.png) that comes with the your Zolinga framework installation for most up-to-date information.
-
-
 # Zolinga CMS
-
-Note: This is a fresh module and may need additional testing. Please report any issues you find.
 
 ## Introduction
 
-Zolinga CMS is a PHP database-less content management system that is designed to be easy to use and easy to extend.
+Zolinga CMS is a database-less content management system that is designed to be easy to use and easy to extend.
 
 Features:
 
@@ -23,10 +16,6 @@ Features:
 
 ## But... why?
 
-In the realm of modern web applications, traditional CMS systems are beginning to lose their significance. Robust CMS platforms are being supplanted by single-page applications boasting dynamic interfaces, components, and streamlined backend content databases.
-
-This module responds to the evolving landscape. For the project I developed it for, the need for a conventional CMS is virtually non-existent. The primary component is a single-page, fully-fledged administration interface that operates independently of traditional content storage methods commonly associated with full-blown CMS platforms. As a result, I sought something simple yet powerful to bootstrap all frontend elements required. Something traditional, devoid of unnecessary features, primarily for raw SEO purposes, customer-targeted design features, and other eye candies, terms and conditions, and other static textual content in multiple languages. The intended use is also for mass-managed microsites.
-
 It is a hybrid between a plain static HTML files and a fullblown database-driven CMS. It is designed to be easy to use and easy to extend. Able to support simplified page templates and dynamic elements.
 
 The use cases are endless. You can use it for a simple blog, a small different-design microsites that have content updated
@@ -34,19 +23,9 @@ using FTP, a personal site with custom contact form written in PHP...
 
 Really endless. It is up to you. I just provide the shovel. You find the gold.
 
-## Installation
-
-First you need to install the Zolinga framework (1 minute work under ideal conditions). See [Zolinga PHP Framework](https://github.com/webdevelopers-eu/zolinga). Then you can install the Zolinga CMS module by running this command in the root of your Zolinga installation:
-
-```bash
-$ ./bin/zolinga install --module=zolinga-cms
-```
-
-Note: The command line `git` command is required.
-
 ## Defining a Page Tree
 
-The pages are stored in private module folder (see Zolinga WIKI) `data/zolinga-cms/pages`. The structure is as you would expect from normal static pages. The root of the page tree is the `index.html` file. The pages are stored in folders and the folder structure defines the page tree.
+The pages are stored in [private module folder](:Zolinga Core:Module Anatomy) `data/zolinga-cms/pages`. The structure is as you would expect from normal static pages. The root of the page tree is the `index.html` file. The pages are stored in folders and the folder structure defines the page tree.
 
 For example the URL `/about/team` would be stored in the file `data/zolinga-cms/pages/about/team/index.html` or `data/zolinga-cms/pages/about/team.html`.
 
@@ -59,7 +38,7 @@ During development you can disable the cache by setting the `cache` option to `f
 ```json
 {
     "cms": {
-      "menuCache": false
+      "menuCache": true
     }
 }
 ```
@@ -99,7 +78,7 @@ or
 <meta name="cms.template" content="public://{module}/{path}"/>
 ```
 
-If the `cms.template` starts with `public://` or `dist://` the system will expect the Zolinga URI path (see Zolinga inbuilt WIKI) to the template HTML file. Example: `public://zolinga-cms/templates/example/main.html`.
+If the `cms.template` starts with `public://` or `dist://` the system will expect the [Zolinga URI path](:Zolinga Core:Paths and Zolinga URI) to the template HTML file. Example: `public://zolinga-cms/templates/example/main.html`.
 
 ## Shuffling the Content
 
@@ -107,16 +86,28 @@ It is common that you don't want all the content to end up in the `<cms-content>
 
 - `append-to="{id}"`
 > Appends the element to the element with the specified ID.
+- `append-contents-to="{id}"`
+> Appends all the child elements of the element to the element with the specified ID and then removes the element.
 - `prepend-to="{id}"`
 > Prepends the element to the element with the specified ID.
+- `prepend-contents-to="{id}"`
+> Prepends all the child elements of the element to the element with the specified ID and then removes the element.
 - `replace="{id}"`
 > Replaces the element with the specified ID.
+- `replace-with-contents="{id}"`
+> Replaces the element with the specified ID with all the child elements of the element. The empty element is then removed.
 - `replace-contents="{id}"`
 > Replaces all the child elements of the element with the specified ID.
+- `replace-contents-with-contents="{id}"`
+> Replaces all the child elements of the element with the specified ID with all the child elements of the element. The empty element is then removed.
 - `move-before="{id}"`
 > Moves the element before the element with the specified ID.
+- `move-contents-before="{id}"`
+> Moves all the child elements of the element before the element with the specified ID. The empty element is then removed.
 - `move-after="{id}"`
 > Moves the element after the element with the specified ID.
+- `move-contents-after="{id}"`
+- Moves all the child elements of the element after the element with the specified ID. The empty element is then removed.
 
 ### Example
 
@@ -164,11 +155,11 @@ Page file `data/zolinga-cms/pages/about/index.html`:
 
 ## Custom Elements
 
-The CMS supports custom dynamic elements. You can define any custom HTML element. When CMS parser sees the element it will dispatch an *internal* event `cms:content:*` (see Zolinga inbuilt WIKI) with the element in `$event->input` and will expect any Listener to return the content to replace the element in `$event->output`. 
+The CMS supports custom dynamic elements. You can define any custom HTML element. When CMS parser sees the element it will dispatch an *internal* event [cms:content:*](:ref:event:cms:content:*) with the element in `$event->input` and will expect any Listener to return the content to replace the element in `$event->output`. 
 
 ### Example
 
-Listener (see Zolinga inbuilt WIKI) setup in `zolinga.json`:
+[Listener](:Zolinga Core:Events and Listeners) setup in `zolinga.json`:
 
 ```json
 {
@@ -229,21 +220,21 @@ That's it. Easy, isn't it?
 
 ### Client-side Rendering
 
-Any custom element with attribute `render="client"` will be ignored by CMS. This is useful for elements that need to be processed by JavaScript as Web Components (see Zolinga inbuilt WIKI). But if you forget to add the attribute to the element nothing will break. CMS will try to pass it to Listeners as usual and since no Listener will be found it will just ignore it anyway.
+Any custom element with attribute `render="client"` will be ignored by CMS. This is useful for elements that need to be processed by JavaScript as [Web Components](:ref:Zolinga Core:Web Components). But if you forget to add the attribute to the element nothing will break. CMS will try to pass it to Listeners as usual and since no Listener will be found it will just ignore it anyway.
 
 ## Supported Dynamic Elements
 
-See the full list of dynamic elements (see Zolinga inbuilt WIKI).
+See [the full list of dynamic elements](:ref:cms).
 
 ## Variables
 
 You can use following variables in both your template and content `.html` files:
 
-- `{{designPath}}`
+- `\{\{designPath}}`
 > It will be replaced with the path to the design folder. This is useful for referencing assets in your design folder.
-- `{{locale}}`
+- `\{\{locale}}`
 > It will be replaced with the current locale. E.g. 'en-US'
-- `{{lang}}`
+- `\{\{lang}}`
 > It will be replaced with the current language. E.g. 'en'
 
 E.g. if you design is `example/main` then the variable will be replaced with `/data/zolinga-cms/designs/example`.
@@ -259,3 +250,8 @@ Example:
 ## Translating Content
 
 The CMS is able to cooperate with [Zolinga Intl](https://github.com/webdevelopers-eu/zolinga-intl) module to provide full translation support. Refere to the Zolinga Intl documentation for more information.
+
+# Related
+
+- [List of CMS Elements](:ref:cms)
+
