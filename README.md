@@ -2,8 +2,6 @@
 
 # Zolinga CMS
 
-Note: This is a fresh module and may need additional testing. Please report any issues you find.
-
 ## Introduction
 
 Zolinga CMS is a PHP database-less content management system that is designed to be easy to use and easy to extend.
