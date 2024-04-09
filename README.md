@@ -14,7 +14,7 @@ Features:
 - Support for expanding dynamic custom elements. E.g. `<cms-menu depth="2"></cms-menu>`
 - Support for translating content ([Zolinga Intl](https://github.com/webdevelopers-eu/zolinga-intl) module required)
 - Support for templates
-- Support for HTML/Javascript [WHATWG Web Component management](https://developer.mozilla.org/en-US/docs/Web/API/Web_components) out of the box (provided by [Zolinga](https://github.com/webdevelopers-eu/zolinga))
+- [WHATWG Web Component](https://developer.mozilla.org/en-US/docs/Web/API/Web_components) management out of the box (provided by [Zolinga](https://github.com/webdevelopers-eu/zolinga))
 - And much more...
 
 ## But... why?
