@@ -1,7 +1,5 @@
 **This repository holds the  [Zolinga](https://github.com/webdevelopers-eu/zolinga) module.**
 
-Please refer to [Zolinga PHP Framework](https://github.com/webdevelopers-eu/zolinga) for more information. Also refer to inbuilt [Zolinga WIKI](https://github.com/webdevelopers-eu/zolinga/blob/main/system/data/zolinga-wiki-screenshot.png) that comes with the your Zolinga framework installation for most up-to-date information.
-
 # Zolinga CMS
 
 Note: This is a fresh module and may need additional testing. Please report any issues you find.
