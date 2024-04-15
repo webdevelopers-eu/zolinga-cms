@@ -272,7 +272,9 @@ class Page implements JsonSerializable
                 $event->dispatch();
                 if ($event->status == $event::STATUS_OK) {
                     $children = iterator_to_array($event->output->childNodes);
-                    $element->before(...$children); // append all children of the output
+                    if ($children) {
+                        $element->before(...$children); // append all children of the output
+                    }
                     $element->remove();
                     $processed++;
                 } else {
@@ -347,9 +349,10 @@ class Page implements JsonSerializable
             or throw new Exception("Failed to read file $file.");
 
         $html = str_replace(
-            ['{{designPath}}', '{{locale}}', '{{lang}}'], 
-            [$this->designUrlPath, $this->lang ?: 'en-US', Locale::getPrimaryLanguage($this->lang ?: 'en')], 
-            $html);
+            ['{{designPath}}', '{{locale}}', '{{lang}}'],
+            [$this->designUrlPath, $this->lang ?: 'en-US', Locale::getPrimaryLanguage($this->lang ?: 'en')],
+            $html
+        );
 
 
         $doc->loadHTML($html, LIBXML_NOERROR)
@@ -455,13 +458,14 @@ class Page implements JsonSerializable
      * @param callable $moveCallback example: fn (DOMElement $target, DOMNode ...$nodes) => $target->append(...$nodes);
      * @return void
      */
-    private function moveAround(string $attrSelfName, string $attrContentsName, callable $moveCallback): void {
+    private function moveAround(string $attrSelfName, string $attrContentsName, callable $moveCallback): void
+    {
         /** @var array<DOMAttr> $attrs */
         $attrs = iterator_to_array($this->xpath->query("//@$attrSelfName|//@$attrContentsName") ?: []);
         foreach ($attrs as $attr) {
             $target = $this->getElementById($attr->value);
             if (!$target) continue; // maybe the target is not yet loaded? Leave it as is.
-        
+
             if ($attr->name === $attrSelfName) {
                 $moveCallback($target, $attr, $attr->ownerElement);
                 $attr->ownerElement->removeAttribute($attr->name);
