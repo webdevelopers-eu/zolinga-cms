@@ -96,7 +96,7 @@ class Page implements JsonSerializable
 
         $this->meta = array_merge(
             [
-                'cms_template' => '/',
+                'cms_template' => '',
                 'cms_priority' => '0.5',
                 'cms_title' => '',
                 'dc_title' => '',
@@ -110,7 +110,7 @@ class Page implements JsonSerializable
             get_meta_tags($path) ?: []
         );
 
-        if (isset($this->meta['cms_template'])) {
+        if ($this->meta['cms_template']) {
             if (preg_match('@^(public|dist)://@', $this->meta['cms_template'])) {
                 $this->layoutFilePath = $api->fs->toPath($this->meta['cms_template']);
             } else {
