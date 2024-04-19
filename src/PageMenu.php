@@ -57,6 +57,15 @@ class PageMenu implements ListenerInterface
         $breadcrumbPaths = array_map(fn($item) => $item->urlPath, $breadcrumbs);
         $menu = $this->generateMenu($event->output->ownerDocument, $startPage, $depth, $breadcrumbPaths); 
 
+        // Append <cms-menu><menu>ITEMS</menu></cms-menu>
+        foreach($event->input->childNodes as $child) {
+            if ($child->nodeType === XML_ELEMENT_NODE && $child->localName === 'menu') {
+                foreach($child->childNodes as $node) {
+                    $menu->appendChild($node->cloneNode(true));
+                }
+            }
+        }
+
         $wrapper = $event->output->ownerDocument->createElement('cms-menu');
         $wrapper->appendChild($menu);
         $wrapper->setAttribute('render', 'client');
