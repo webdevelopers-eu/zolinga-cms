@@ -59,7 +59,7 @@ The `.html` file can contain following meta data that affects the menu:
 > Optionally hides the page from the menu. Default: "visible"
 - `<meta name="cms.class" content="{class class ...}"/>`
 > Optionally adds CSS classes to the menu item. You can use classes for more complex control of menu visibility that you can control through CSS or JavaScript.
-- `<link rel="canonical" href="{url}"/>`
+- `<link rel="canonical" href="{url}"/>` or `<meta name="cms.canonical" content="{url|javascript:...}"/>`
 > Defines custom URL of the menu link. By default the canonicalized file path is used.
 
 ## Templates

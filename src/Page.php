@@ -106,6 +106,7 @@ class Page implements JsonSerializable
                 'cms_right' => '**not-implemented**',
                 'cms_visibility' => 'visible',
                 'cms_class' => '', // will be copied to <li class> of the menu
+                'cms_canonical' => '', // canonical URL or javascript: scheme
             ],
             get_meta_tags($path) ?: []
         );
@@ -142,7 +143,7 @@ class Page implements JsonSerializable
             $this->fileXPath->evaluate('string(//title)') ?:
             dgettext('zolinga-cms', 'Untitled Page');
         $this->modified = filemtime($this->path) ?: 0;
-        $this->canonical = $this->fileXPath->evaluate('string(//link[@rel="canonical"]/@href)') ?: null;
+        $this->canonical = $this->meta['cms_canonical'] ?: $this->fileXPath->evaluate('string(//link[@rel="canonical"]/@href)') ?: null;
     }
 
     public function __get(string $name): mixed
