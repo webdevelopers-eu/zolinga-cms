@@ -223,6 +223,8 @@ class Page implements JsonSerializable
      */
     private function initializeContent(): void
     {
+        global $api;
+
         if ($this->layoutFilePath) {
             $this->loadTemplate();
             $this->injectContentDocument($this->fileDoc);
@@ -232,6 +234,11 @@ class Page implements JsonSerializable
         }
 
         $this->doc->documentElement->setAttribute('lang', $this->lang ?: 'en');
+
+        // Sticky revision hash that changes anytime zolinga.json changes.
+        // So if you want to update it increment any number in any zolinga.json.
+        $this->doc->documentElement->setAttribute('data-revision', substr($api->manifest->superHash, 0, 6));
+
         $this->processCustomElements();
         $this->reshuffle();
     }
