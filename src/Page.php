@@ -6,7 +6,7 @@ namespace Zolinga\Cms;
 
 use Zolinga\Cms\Events\ContentElementEvent;
 use DOMAttr, DOMDocument, DOMXPath, DOMNode, DOMElement, Exception, JsonSerializable, Locale, SplFileInfo;
-
+use const Zolinga\System\ROOT_DIR;
 /**
  * Represents a page.
  * 
@@ -241,7 +241,36 @@ class Page implements JsonSerializable
 
         $this->processCustomElements();
         $this->reshuffle();
+        $this->appendRevParam();
     }
+
+    private function appendRevParam(): void
+    {
+        $rev = $this->doc->documentElement->getAttribute('data-revision');
+        $expr = "(//@src|//@href)[starts-with(., '/') or starts-with(., '{{')][not(contains(., '?rev='))]";
+        $attrs = iterator_to_array($this->xpath->query($expr) ?: []);
+        /** @var DOMAttr $attr */
+        foreach ($attrs as $attr) {
+            $url = $attr->value;
+            $path = parse_url($url, PHP_URL_PATH);
+
+            if (file_exists(ROOT_DIR . '/public' . $path)) {
+                $useRev = filemtime(ROOT_DIR . '/public' . $path);
+            } elseif ($rev) {
+                $useRev = $rev;
+            } else {
+                continue;
+            }
+
+            if (strpos($url, '?') === false) {
+                $url .= "?rev=$useRev";
+            } else {
+                $url .= "&rev=$useRev";
+            }
+            $attr->value = $url;
+        }
+    }
+
 
     /**
      * Create a event to process custom elements and dispatch it.
