@@ -247,7 +247,15 @@ class Page implements JsonSerializable
     private function appendRevParam(): void
     {
         $rev = $this->doc->documentElement->getAttribute('data-revision');
-        $expr = "(//@src|//@href)[starts-with(., '/') or starts-with(., '{{')][not(contains(., '?rev='))]";
+
+        // Excluding web-components.js as it is included also from other modules
+        // resulting in double-inclusion once with ?rev and once without.
+        $expr = <<<XPATH
+            (//@src|//@href)
+                [starts-with(., '/') or starts-with(., '{{')]
+                    [not(contains(., '?rev='))]
+                        [not(contains(., '/web-components.js'))]
+            XPATH;
         $attrs = iterator_to_array($this->xpath->query($expr) ?: []);
         /** @var DOMAttr $attr */
         foreach ($attrs as $attr) {
