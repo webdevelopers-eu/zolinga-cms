@@ -25,7 +25,7 @@ class WikiCmsElements extends WikiArticle implements ListenerInterface
         $this->contentFiles[] = new WikiText(<<<EOT
             # Zolinga CMS
 
-            Complete list of currently supported CMS custom elements.
+            Complete list of currently supported CMS (server-side parsed) custom elements.
 
             $list
             EOT, WikiText::MIME_MARKDOWN);
