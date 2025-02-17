@@ -25,4 +25,4 @@ It is common that you don't want all the content to end up in the `<cms-content>
 - `move-after="{id}"`
 > Moves the element after the element with the specified ID.
 - `move-contents-after="{id}"`
-- Moves all the child elements of the element after the element with the specified ID. The empty element is then removed.
+> Moves all the child elements of the element after the element with the specified ID. The empty element is then removed.

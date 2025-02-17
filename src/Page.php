@@ -554,9 +554,11 @@ class Page implements JsonSerializable
     private function getElementById(string $id): ?DOMElement
     {
         /** @phpstan-ignore-next-line */
-        $el = $this->xpath->query("//*[@id='$id']")->item(0);
+        $el = $this->xpath->query("//*[@id='" . ltrim($id, '#') ."']")->item(0);
         return $el instanceof DOMElement ? $el : null;
     }
+
+    
 
     public function jsonSerialize(): mixed
     {
