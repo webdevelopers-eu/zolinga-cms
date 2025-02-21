@@ -129,7 +129,7 @@ class Page implements JsonSerializable
         $this->fileXPath = new DOMXPath($this->fileDoc);
 
         $this->priority = max(0.000001, min(0.999999, (float) ($this->meta['cms_priority'] ?: 0.5)));
-        $this->visibility = $this->meta['cms_right'] === 'hidden' ? 'hidden' : 'visible';
+        $this->visibility = $this->meta['cms_right'] === 'hidden' || $this->meta['cms_visibility'] !== 'visible' ? 'hidden' : 'visible';
         $this->right = $this->meta['cms_right'] ?: false;
         $this->description =
             $this->meta['cms_description'] ?:
@@ -251,7 +251,7 @@ class Page implements JsonSerializable
         // Excluding web-components.js as it is included also from other modules
         // resulting in double-inclusion once with ?rev and once without.
         $expr = <<<XPATH
-            (//@src|//@href)
+            (//@src|//link/@href)
                 [starts-with(., '/') or starts-with(., '{{')]
                     [not(contains(., '?rev='))]
                         [not(contains(., '/web-components.js'))]

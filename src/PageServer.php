@@ -78,12 +78,18 @@ class PageServer implements ServiceInterface
 
         // Process the page
         $file = $this->findFile('/' . trim($basePath, '/'));
-        if (!$file) return;
+        if (!$file) {
+            if (!file_exists('private://zolinga-cms/pages/404.html')) {
+                return;
+            }
+            $file = 'private://zolinga-cms/pages/404.html';
+            $event->setStatus($event::STATUS_NOT_FOUND, "Page not found");
+        } else {
+            $event->setStatus($event::STATUS_OK, "Page served");
+        }
 
         $this->currentPage = new Page($file);
-
         $event->content->appendChild($event->content->importNode($this->currentPage->doc->documentElement, true));
-        $event->setStatus($event::STATUS_OK, "Page served");
     }
 
     /**
