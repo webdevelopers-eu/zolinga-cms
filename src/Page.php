@@ -387,7 +387,7 @@ class Page implements JsonSerializable
      * @param string $file
      * @return DOMDocument
      */
-    private function fileToDom(string $file): DOMDocument
+    public function fileToDom(string $file): DOMDocument
     {
         $doc = new DOMDocument;
         $html = file_get_contents($this->getLocalizedFile($file))

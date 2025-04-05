@@ -24,6 +24,15 @@
         "remote",
         "cli"
       ]
+    },
+    {
+      "description": "CMS page.",
+      "event": "cms:content:include-file",
+      "class": "\\Zolinga\\Cms\\IncludeFile",
+      "method": "onIncludeFile",
+      "origin": [
+        "*"
+      ]
     }, 
     {
       "description": "CMS Tree representation.",
