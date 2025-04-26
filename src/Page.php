@@ -393,14 +393,16 @@ class Page implements JsonSerializable
         $html = file_get_contents($this->getLocalizedFile($file))
             or throw new Exception("Failed to read file $file.");
 
+        // HTML-ENTITIES are deprecated in PHP 8.2        
+        // $html = mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8');
+
         $html = str_replace(
             ['{{designPath}}', '{{locale}}', '{{lang}}'],
             [$this->designUrlPath, $this->lang ?: 'en-US', Locale::getPrimaryLanguage($this->lang ?: 'en')],
             $html
         );
 
-
-        $doc->loadHTML($html, LIBXML_NOERROR)
+        $doc->loadHTML("<?xml encoding=\"utf-8\" ?>\n".$html, LIBXML_NOERROR | LIBXML_NONET | LIBXML_COMPACT | LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD)
             or throw new Exception("Failed to parse file $file.");
 
         return $doc;
