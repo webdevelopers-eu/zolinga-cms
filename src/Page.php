@@ -263,7 +263,7 @@ class Page implements JsonSerializable
             $path = parse_url($url, PHP_URL_PATH);
 
             if (file_exists(ROOT_DIR . '/public' . $path)) {
-                $useRev = filemtime(ROOT_DIR . '/public' . $path);
+                $useRev = filemtime(ROOT_DIR . '/public' . $path);  
             } elseif ($rev) {
                 $useRev = $rev;
             } else {
