@@ -113,7 +113,7 @@ class PageServer implements ServiceInterface
 
         // Remove lang
         if (count($langs) == 1 && $containsLang) {
-            $redir = substr($path, 3);
+            $redir = substr($path, 3) ?: '/';
         } elseif (count($langs) > 1 && !$containsLang) {
             $redir = '/' . $api->locale->lang . $path;
         } else {
@@ -132,6 +132,7 @@ class PageServer implements ServiceInterface
 
         // Build full url + $redir path
         header("Location: $redir", true, $status->value);
+        echo "Redirecting to $redir";
         return ["status" => $status, "basePath" => null, "lang" => $lang];
     }
 
