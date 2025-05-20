@@ -51,9 +51,11 @@ class TreeItem
         // This can slow down the system, but it is necessary to keep the cache up to date.
         // If there is too many pages and menus have too many records we need to change that. 
         // (this object is created only for displayed menu items)
-        if ($this->data['modified'] !== filemtime($this->data['path'])) {
-            $api->log->info("zolinga-cms", "Menu cache file {$this->data['path']} has been modified. Flushing cache.");
-            $api->cmsTree->flushCache();
+        $modified = file_exists($this->data['path'] ?? '') ? filemtime($this->data['path']) : 0;
+        $previous = $this->data['modified'] ?? 0;
+        if (!$modified || $previous !== $modified) {
+            $api->log?->info("zolinga-cms", "Menu cache file {$this->data['path']} has been modified on " . date('c', $modified) . " (previous modification " . date('c', $previous) . "). Flushing cache.");
+            $api->cmsTree?->flushCache();
         }
     }
 
