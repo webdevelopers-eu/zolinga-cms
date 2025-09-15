@@ -290,11 +290,12 @@ class Page implements JsonSerializable
 
         // List of registered web components
         $registered = array_map(fn ($atom) => $atom['tag'], $api->manifest['webComponents']);
-        $maxDepth = 32;
+        $iterations = 512;
         do {
             $processed = 0;
             // All element containing a dash are as per WHATWG considered as custom elements.
-            $expr = "//*[contains(local-name(), '-')][not(@render = 'client')]"; // [not(self::cms-content)]";
+            $customElementSelector = "*[contains(local-name(), '-')][not(@render = 'client')]";
+            $expr = "//{$customElementSelector}[not(ancestor::{$customElementSelector})]"; // [not(self::cms-content)]";
 
             /** @var array<DOMElement> $elements */
             $elements = iterator_to_array($this->xpath->query($expr) ?: []);
@@ -305,7 +306,8 @@ class Page implements JsonSerializable
             // );
 
             // Elements should be in the order of appearance in the document. We start from the most inner elements.
-            $elements = array_reverse($elements);
+            // We want the outer be processed first.
+            // $elements = array_reverse($elements);
 
             foreach ($elements as $element) {
                 /** @var DOMElement $element */
@@ -321,14 +323,14 @@ class Page implements JsonSerializable
                         $element->before(...$children); // append all children of the output
                     }
                     $element->remove();
-                    $processed++;
                 } else {
                     $element->setAttribute('render', 'client'); // ignore it next time. Events are expensive so do not repeat the attempt.
                 }
+                $processed++;
             }
-        } while (--$maxDepth && $processed); // repeat unless there are no elements to process
+        } while (--$iterations > 0 && $processed); // repeat unless there are no elements to process
 
-        if (!$maxDepth) {
+        if (!$iterations) {
             trigger_error("Zolinga CMS: Maximum depth of custom elements reached.", E_USER_WARNING);
         }
     }

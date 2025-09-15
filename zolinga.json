@@ -1,6 +1,6 @@
 {
   "name": "Zolinga CMS",
-  "version": "1.0",
+  "version": "1.1",
   "description": "File-based CMS.",
   "authors": [
     "Daniel Sevcik <danny@zolinga.net>"
@@ -23,6 +23,15 @@
       "origin": [
         "remote",
         "cli"
+      ]
+    },
+    {
+      "description": "Replace variables in content. Supports: {{GET:*}}, {{POST:*}}",
+      "event": "cms:content:replace-vars",
+      "class": "\\Zolinga\\Cms\\ReplaceVarsListener",
+      "method": "onReplaceVars",
+      "origin": [
+        "internal"
       ]
     },
     {
