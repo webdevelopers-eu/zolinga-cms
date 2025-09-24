@@ -512,7 +512,7 @@ class Page implements JsonSerializable
         /** @var array<DOMAttr> $attrs */
         $attrs = iterator_to_array($this->xpath->query("//@$attrSelfName|//@$attrContentsName") ?: []);
         foreach ($attrs as $attr) {
-            $target = $this->getElementById($attr->value);
+            $target = $this->getElementBySelector($attr->value);
             if (!$target) continue; // maybe the target is not yet loaded? Leave it as is.
 
             if ($attr->name === $attrSelfName) {
@@ -555,9 +555,15 @@ class Page implements JsonSerializable
      * @param string $id
      * @return DOMElement|null
      */
-    private function getElementById(string $id): ?DOMElement
+    private function getElementBySelector(string $id): ?DOMElement
     {
         /** @phpstan-ignore-next-line */
+        if (str_starts_with($id, 'xpath:')) {
+            $xpath = trim(substr($id, 6));
+            $el = $this->xpath->query($xpath)->item(0);
+            return $el instanceof DOMElement ? $el : null;
+        }
+
         $el = $this->xpath->query("//*[@id='" . ltrim($id, '#') ."']")->item(0);
         return $el instanceof DOMElement ? $el : null;
     }
