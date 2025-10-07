@@ -8,6 +8,12 @@ use Zolinga\System\Events\ListenerInterface;
 
 class IncludeFile implements ListenerInterface {
 
+    /**
+     * Syntax: <include-file src="{{FILE_PATH}}" [select="{{XPATH}}"] />
+     *
+     * @param ContentElementEvent $event
+     * @return void
+     */
     public function onIncludeFile(ContentElementEvent $event): void 
     {
         global $api;
@@ -27,7 +33,12 @@ class IncludeFile implements ListenerInterface {
         }
 
         $doc = $api->cms->currentPage->fileToDom($realPath);
-        $event->output->appendChild($event->output->ownerDocument->importNode($doc->documentElement, true));
+        $xp = new \DOMXPath($doc);
+        $select = $event->input->getAttribute('select') ?: '/*';
+
+        foreach ($xp->query($select) as $node) {
+            $event->output->appendChild($event->output->ownerDocument->importNode($node, true));
+        }
 
         $event->setStatus($event::STATUS_OK, "File included: ".basename($path));
     }
