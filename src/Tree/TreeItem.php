@@ -55,7 +55,7 @@ class TreeItem
         $previous = $this->data['modified'] ?? 0;
         if (!$modified || $previous !== $modified) {
             $api->log?->info("zolinga-cms", "Menu cache file {$this->data['path']} has been modified on " . date('c', $modified) . " (previous modification " . date('c', $previous) . "). Flushing cache.");
-            if ($api->serviceExists('cmsTree') && $api->cmsTree?->flushCache()) {
+            if (!$api->serviceExists('cmsTree') || !$api->cmsTree?->flushCache()) {
                 $api->log?->warning("zolinga-cms", "Failed to flush menu cache. \$api->cmsTree is not available or does not implement flushCache().");
             }
         }
