@@ -235,7 +235,7 @@ That's it. Easy, isn't it?
 
 ### Client-side Rendering
 
-Any custom element with attribute `render="client"` will be ignored by CMS. This is useful for elements that need to be processed by JavaScript as [Web Components](:ref:Zolinga Core:Web Components). But if you forget to add the attribute to the element nothing will break. CMS will try to pass it to Listeners as usual and since no Listener will be found it will just ignore it anyway.
+Any custom element with attribute `render="client"` will be ignored by CMS. This is useful for elements that need to be processed by JavaScript as [Web Components](:Zolinga Core:Web Components). But if you forget to add the attribute to the element nothing will break. CMS will try to pass it to Listeners as usual and since no Listener will be found it will just ignore it anyway.
 
 ## Supported Dynamic Elements
 
