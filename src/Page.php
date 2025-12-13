@@ -237,7 +237,7 @@ class Page implements JsonSerializable
 
         // Sticky revision hash that changes anytime zolinga.json changes.
         // So if you want to update it increment any number in any zolinga.json.
-        $this->doc->documentElement->setAttribute('data-revision', substr($api->manifest->superHash, 0, 6));
+        $this->doc->documentElement->setAttribute('data-revision', $api->manifest->revHash);
 
         $this->processCustomElements();
         $this->reshuffle();
@@ -391,6 +391,8 @@ class Page implements JsonSerializable
      */
     public function fileToDom(string $file): DOMDocument
     {
+        global $api;
+
         $doc = new DOMDocument;
         $html = file_get_contents($this->getLocalizedFile($file))
             or throw new Exception("Failed to read file $file.");
@@ -399,8 +401,8 @@ class Page implements JsonSerializable
         // $html = mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8');
 
         $html = str_replace(
-            ['{{designPath}}', '{{locale}}', '{{lang}}'],
-            [$this->designUrlPath, $this->lang ?: 'en-US', Locale::getPrimaryLanguage($this->lang ?: 'en')],
+            ['{{designPath}}', '{{locale}}', '{{lang}}', '{{revHash}}'],
+            [$this->designUrlPath, $this->lang ?: 'en-US', Locale::getPrimaryLanguage($this->lang ?: 'en'), $api->manifest->revHash],
             $html
         );
 
