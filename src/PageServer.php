@@ -90,6 +90,15 @@ class PageServer implements ServiceInterface
 
         $this->currentPage = new Page($file);
         $event->content->appendChild($event->content->importNode($this->currentPage->doc->documentElement, true));
+
+        // Remove <meta name="cms.template" ...> tags
+        $metas = $event->content->getElementsByTagName('meta');
+        for ($i = $metas->length - 1; $i >= 0; $i--) {
+            $meta = $metas->item($i);
+            if ($meta->getAttribute('name') === 'cms.template') {
+                $meta->parentNode->removeChild($meta);
+            }
+        }
     }
 
     /**
