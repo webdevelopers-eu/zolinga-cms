@@ -21,11 +21,13 @@ The tag supports the following placeholder formats:
 
 - `{{GET:parameter_name}}`: Will be replaced with the value of the GET parameter with the specified name
 - `{{POST:parameter_name}}`: Will be replaced with the value of the POST parameter with the specified name
+- `{{GET:parameter_name|default_value}}`: Uses `default_value` when the GET parameter is missing or empty
+- `{{POST:parameter_name|default_value}}`: Uses `default_value` when the POST parameter is missing or empty
 
 ## Features
 
 - Replacements are performed in all text nodes and attribute values within the `<replace-vars>` tag
-- If a variable doesn't exist, it will be replaced with an empty string
+- If a variable doesn't exist, its default value is used when provided, otherwise it is replaced with an empty string
 
 ## Example
 
@@ -33,7 +35,7 @@ The tag supports the following placeholder formats:
 <replace-vars>
     <div class="search-container" data-query="{{GET:q}}">
         <h2>Search Results for: {{GET:q}}</h2>
-        <p>Page: {{GET:page}}</p>
+        <p>Page: {{GET:page|1}}</p>
         
         <div class="filter">
             <span>Filter: {{GET:filter}}</span>
@@ -41,7 +43,7 @@ The tag supports the following placeholder formats:
         
         <div class="form-feedback">
             <p>You submitted: {{POST:message}}</p>
-            <p>Category: {{POST:category}}</p>
+            <p>Category: {{POST:category|general}}</p>
         </div>
     </div>
 </replace-vars>

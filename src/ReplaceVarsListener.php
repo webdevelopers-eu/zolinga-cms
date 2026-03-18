@@ -14,7 +14,8 @@ use DOMDocument;
 /**
  * ReplaceVars content element handler
  * 
- * Replaces variable placeholders in the form {{GET:varname}}, {{POST:varname}}
+ * Replaces variable placeholders in the form {{GET:varname}}, {{POST:varname}},
+ * {{GET:varname|defaultValue}}, and {{POST:varname|defaultValue}}
  * in all text nodes and attributes within the element.
  * 
  * @author Daniel Sevcik
@@ -49,27 +50,22 @@ class ReplaceVarsListener implements ListenerInterface {
     
     /**
      * Process a single node (text or attribute) to replace variables
+     * 
+        * Syntax: {{METHOD:varname}} or {{METHOD:varname|defaultValue}}
+        * METHOD can be GET or POST, and defaultValue is optional.
      *
      * @param string $content The content to process
      * @return string The processed content
      */
     private function replace(string $content): string
     {        
-        // Replace {{GET:*}} variables
-        if (isset($_GET) && is_array($_GET) && !empty($_GET)) {
-            $content = preg_replace_callback('/\{\{GET:([^}]+)\}\}/', function($matches) {
-                $varName = $matches[1];
-                return isset($_GET[$varName]) ? $_GET[$varName] : $matches[0];
-            }, $content);
-        }
-        
-        // Replace {{POST:*}} variables
-        if (isset($_POST) && is_array($_POST) && !empty($_POST)) {
-            $content = preg_replace_callback('/\{\{POST:([^}]+)\}\}/', function($matches) {
-                $varName = $matches[1];
-                return isset($_POST[$varName]) ? $_POST[$varName] : $matches[0];
-            }, $content);
-        }
+        // Replace {{GET:*}} and {{POST:*}} variables
+        $content = preg_replace_callback('/\{\{ (?<method>POST|GET) : (?<varName>[^|}]+) (?:\|(?<defaultValue>[^}]*))? \}\}/x', function($matches) {
+            $varName = $matches['varName'];
+            $defaultValue = $matches['defaultValue'] ?? '';
+            $method = $matches['method'];
+            return (!empty(${"_$method"}[$varName]) ? ${"_$method"}[$varName] : $defaultValue) ?? $matches[0];
+        }, $content);
         
         return $content;
     }
