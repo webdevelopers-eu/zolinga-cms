@@ -60,11 +60,20 @@ class ReplaceVarsListener implements ListenerInterface {
     private function replace(string $content): string
     {        
         // Replace {{GET:*}} and {{POST:*}} variables
-        $content = preg_replace_callback('/\{\{ (?<method>POST|GET) : (?<varName>[^|}]+) (?:\|(?<defaultValue>[^}]*))? \}\}/x', function($matches) {
-            $varName = $matches['varName'];
-            $defaultValue = $matches['defaultValue'] ?? '';
-            $method = $matches['method'];
-            return (!empty(${"_$method"}[$varName]) ? ${"_$method"}[$varName] : $defaultValue) ?? $matches[0];
+        $content = preg_replace_callback('/\{\{ (?<method>POST|GET) : (?<varName>[^|}]+) (?:\|(?<defaultValue>[^}]*))? \}\}/x', function ($matches) {
+            $varName = trim($matches['varName']);
+            $defaultValue = $matches['defaultValue'] ?? null;
+            $source = $matches['method'] === 'GET' ? $_GET : $_POST;
+
+            if (array_key_exists($varName, $source) && $source[$varName] !== '') {
+                $ret = (string) $source[$varName];
+            } elseif ($defaultValue !== null) {
+                $ret = $defaultValue;
+            } else {
+                $ret = $matches[0]; // No replacement, keep original
+            }
+
+            return $ret;
         }, $content);
         
         return $content;
