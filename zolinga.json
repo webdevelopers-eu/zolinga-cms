@@ -1,6 +1,6 @@
 {
   "name": "Zolinga CMS",
-  "version": "1.1",
+  "version": "1.2",
   "description": "File-based CMS.",
   "authors": [
     "Daniel Sevcik <danny@zolinga.net>"
@@ -73,6 +73,15 @@
       "event": "system:wiki:ref:discovery",
       "class": "\\Zolinga\\Cms\\WikiCmsElements",
       "method": "onWikiRefDiscovery",
+      "origin": [
+        "internal"
+      ]
+    },
+    {
+      "description": "Applies XSLT transformation to inner content of <transform-content> tag.",
+      "event": "cms:content:transform-content",
+      "class": "\\Zolinga\\Cms\\TransformContentListener",
+      "method": "onTransformContent",
       "origin": [
         "internal"
       ]
