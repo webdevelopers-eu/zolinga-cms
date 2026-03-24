@@ -14,7 +14,15 @@
       "origin": [
         "*"
       ]
-    }, 
+    },
+    {
+      "description": "CMS Content Parser",
+      "service": "cmsParser",
+      "class": "\\Zolinga\\Cms\\ContentParser",
+      "origin": [
+        "*"
+      ]
+    },
     {
       "description": "CMS server.",
       "event": "system:content",

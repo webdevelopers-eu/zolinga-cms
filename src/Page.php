@@ -287,52 +287,7 @@ class Page implements JsonSerializable
     private function processCustomElements(): void
     {
         global $api;
-
-        // List of registered web components
-        $registered = array_map(fn ($atom) => $atom['tag'], $api->manifest['webComponents']);
-        $iterations = 512;
-        do {
-            $processed = 0;
-            // All element containing a dash are as per WHATWG considered as custom elements.
-            $customElementSelector = "*[contains(local-name(), '-')][not(@render = 'client')]";
-            $expr = "//{$customElementSelector}[not(ancestor::{$customElementSelector})]"; // [not(self::cms-content)]";
-
-            /** @var array<DOMElement> $elements */
-            $elements = iterator_to_array($this->xpath->query($expr) ?: []);
-
-            // $elements = array_filter( // remove elements that are registered Web Components
-            //     $elements,
-            //     fn (DOMNode $node) => !in_array($node->localName, $registered)
-            // );
-
-            // Elements should be in the order of appearance in the document. We start from the most inner elements.
-            // We want the outer be processed first.
-            // $elements = array_reverse($elements);
-
-            foreach ($elements as $element) {
-                /** @var DOMElement $element */
-                $event = new ContentElementEvent(
-                    'cms:content:' . $element->localName,
-                    ContentElementEvent::ORIGIN_INTERNAL,
-                    $element->cloneNode(true) // clone to resist the temptation to modify the original element
-                );
-                $event->dispatch();
-                if ($event->status == $event::STATUS_OK) {
-                    $children = iterator_to_array($event->output->childNodes);
-                    if ($children) {
-                        $element->before(...$children); // append all children of the output
-                    }
-                    $element->remove();
-                } else {
-                    $element->setAttribute('render', 'client'); // ignore it next time. Events are expensive so do not repeat the attempt.
-                }
-                $processed++;
-            }
-        } while (--$iterations > 0 && $processed); // repeat unless there are no elements to process
-
-        if (!$iterations) {
-            trigger_error("Zolinga CMS: Maximum depth of custom elements reached.", E_USER_WARNING);
-        }
+        $api->cmsParser->parse($this->doc->documentElement);
     }
 
     /**
