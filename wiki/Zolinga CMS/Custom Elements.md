@@ -2,7 +2,16 @@ Priority: 0.8
 
 # Custom Elements
 
-The CMS supports custom dynamic elements. You can define any custom HTML element. When CMS parser sees the element it will dispatch an *internal* event [cms:content:*](:ref:event:cms:content:*) with the element in `$event->input` and will expect any Listener to return the content to replace the element in `$event->output`. 
+The CMS supports custom dynamic elements. You can define any custom HTML element. When CMS parser sees the element it will dispatch an *internal* event [cms:content:*](:ref:event:cms:content:*) with the element in `$event->input` and will expect any Listener to return the content to replace the element in `$event->output`.
+
+## ContentElementEvent Properties
+
+| Property | Type | Description |
+|---|---|---|
+| `$event->input` | `DOMElement` | The original custom element to process (read-only). |
+| `$event->output` | `DOMDocumentFragment` | The output fragment — append your generated content here. |
+| `$event->inputXPath` | `DOMXPath` | Cached XPath instance for querying the input document. The `cms` namespace (`http://www.zolinga.net/cms`) is pre-registered. |
+| `$event->outputXPath` | `DOMXPath` | Cached XPath instance for querying the output document. The `cms` namespace is pre-registered. | 
 
 ## Example
 
@@ -40,6 +49,9 @@ class MyDynamicElement implements ListenerInterface
 
         /** @var \DOMElement $event->input */
         $name = $event->input->getAttribute('name') ?: 'Unknown';
+
+        // Use inputXPath to query elements within the input
+        $items = $event->inputXPath->query('.//item', $event->input);
 
         /** @var \DOMDocumentFragment $event->output */
         $event->output->appendXML("<div><h1>Hello $name!</h1> <small>URL: $url</small></div>");
