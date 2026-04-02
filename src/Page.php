@@ -237,7 +237,11 @@ class Page implements JsonSerializable
 
         // Sticky revision hash that changes anytime zolinga.json changes.
         // So if you want to update it increment any number in any zolinga.json.
-        $this->doc->documentElement->setAttribute('data-revision', $api->manifest->revHash);
+        $rev=join("-", array_filter([
+            $api->config['version'],
+            $api->manifest->revHash
+        ]));
+        $this->doc->documentElement->setAttribute('data-revision', $rev);
 
         $this->processCustomElements();
         $this->reshuffle();
