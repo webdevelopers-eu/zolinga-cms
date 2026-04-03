@@ -265,10 +265,11 @@ class Page implements JsonSerializable
         foreach ($attrs as $attr) {
             $url = $attr->value;
             $path = parse_url($url, PHP_URL_PATH);
+            $ext = pathinfo($path, PATHINFO_EXTENSION); // static files have extensions
 
             if (file_exists(ROOT_DIR . '/public' . $path)) {
                 $useRev = filemtime(ROOT_DIR . '/public' . $path);  
-            } elseif ($rev) {
+            } elseif ($rev && $ext) {
                 $useRev = $rev;
             } else {
                 continue;
