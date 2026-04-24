@@ -35,6 +35,8 @@ class ContentParser implements ServiceInterface
      * @return void
      */
     public function parse(DOMElement $content, $onlyChildren=false): void {
+        global $api;
+
         $xpath = new DOMXPath($content->ownerDocument);
         $context = $content;
 
@@ -87,7 +89,17 @@ class ContentParser implements ServiceInterface
                     }
 
                     $element->remove();
-                } else {
+                } elseif ($event->error) {
+                    // Something went horibly wrong, exception or something.
+                    // Remove the element as it may contain sensitive data.
+                    $msg = dgettext("zolinga-cms", "An error occurred while processing dynamic content.");
+                    $errElement = $element->ownerDocument->createElement('content-error', htmlspecialchars($msg));
+                    foreach(['class' => 'error', 'render' => 'client', 'role' => 'alert', 'aria-live' => 'assertive'] as $attr => $value) {
+                        $errElement->setAttribute($attr, $value);
+                    }   
+                    $element->before($errElement);
+                    $element->remove();
+                } else { // Undetermined or other 2xx status then 200 OK, we assume that the element should be rendered on the client side.
                     $element->setAttribute('render', 'client'); // ignore it next time. Events are expensive so do not repeat the attempt.
                 }
                 $processed++;
