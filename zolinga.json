@@ -1,6 +1,6 @@
 {
   "name": "Zolinga CMS",
-  "version": "1.4",
+  "version": "1.6",
   "description": "File-based CMS.",
   "authors": [
     "Daniel Sevcik <danny@zolinga.net>"
@@ -38,6 +38,15 @@
       "event": "cms:content:replace-vars",
       "class": "\\Zolinga\\Cms\\ReplaceVarsListener",
       "method": "onReplaceVars",
+      "origin": [
+        "internal"
+      ]
+    },
+    {
+      "description": "Choose random matching nodes from the element content.",
+      "event": "cms:content:random-chooser",
+      "class": "\\Zolinga\\Cms\\RandomChooserListener",
+      "method": "onRandomChooser",
       "origin": [
         "internal"
       ]
