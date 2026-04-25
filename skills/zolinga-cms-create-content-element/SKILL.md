@@ -26,7 +26,7 @@ argument-hint: "<tag-name> [module]"
 5. Build rendered output strictly in `$event->output`.
 6. Use `$event->inputXPath` when querying the source element or its descendants.
 7. Use `$event->outputXPath` only when you need to query nodes already appended into the output document.
-8. Finish by calling `$event->setStatus(...)` with a `STATUS_*` constant. If status is `STATUS_OK, the original element is replaced by the output fragment. If STATUS_ERROR, the parser treats it as an error and both the original element and the output fragment are discarded and `<content-error>` is inserted instead.
+8. Finish by calling `$event->setStatus(...)` with a `STATUS_*` constant. If status is `STATUS_OK`, the original element is replaced by the output fragment. If status is `STATUS_ERROR`, the parser treats it as an error and both the original element and the output fragment are discarded and `<content-error>` is inserted instead. If the status stays `STATUS_UNDETERMINED` or another non-error, non-OK status, the parser assumes the element is a front-end processed widget, leaves the original element in place, and adds `render="client"` so it is skipped on later server-side passes.
 
 ## Basic ContentElementEvent API
 
@@ -59,6 +59,7 @@ Important consequences:
 - Mutating `$event->input` is strictly forbidden. It is a clone of the original element and any changes to it are lost. Always build output in `$event->output`.
 - The only supported way to replace the element is to append rendered nodes into `$event->output` and report `STATUS_OK`.
 - When the listener returns `STATUS_OK`, the parser inserts `$event->output` children into the real DOM and removes the original custom element.
+- When the listener leaves status as `STATUS_UNDETERMINED` or returns another non-error, non-OK status, the parser keeps the original element, marks it with `render="client"`, and assumes the front end will handle it.
 - If output contains nested custom elements, the parser processes them later in a follow-up pass.
 
 ## Common Pattern
@@ -98,7 +99,7 @@ Typical output operations:
 - Use `$event::STATUS_OK` when output is ready.
 - Use `$event::STATUS_ERROR` when rendering failed and the parser should treat it as an error.
 - Only OK causes the original custom element to be replaced by output nodes.
-- If you intentionally want the element to remain for client rendering, do not report OK.
+- If you intentionally want the element to remain for client rendering, leave the status undetermined or return another non-error, non-OK status. The parser will add `render="client"` and leave the original element as-is.
 
 ## Common Pitfalls
 
