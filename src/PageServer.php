@@ -141,7 +141,6 @@ class PageServer implements ServiceInterface
 
         // Build full url + $redir path
         header("Location: $redir", true, $status->value);
-        echo "Redirecting to $redir";
         return ["status" => $status, "basePath" => null, "lang" => $lang];
     }
 
