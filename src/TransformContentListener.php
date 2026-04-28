@@ -53,7 +53,12 @@ class TransformContentListener implements ListenerInterface
 
         // Build a DOMDocument from the input element (including the element itself)
         $sourceDoc = new DOMDocument();
-        $sourceDoc->appendChild($sourceDoc->importNode($event->input->cloneNode(true), true));
+        // To avoid recursive we create new element to don't copy <transform-content> itself
+        $root = $sourceDoc->createElement('document');
+        $sourceDoc->appendChild($root);
+        foreach ($event->input->childNodes as $child) {
+            $root->appendChild($sourceDoc->importNode($child, true));
+        }
 
         // Load the XSLT stylesheet
         $xslDoc = new DOMDocument();
