@@ -35,6 +35,11 @@ class TransformContentListener implements ListenerInterface
         global $api;
 
         $xsltPath = $event->input->getAttribute('xslt');
+        $stripRoot = match ($event->input->getAttribute('strip-root')) {
+            'true' => true,
+            'false' => false,
+            default => null,
+        };
 
         if (!$xsltPath) {
             $this->appendError($event, 'Missing required attribute "xslt" on &lt;transform-content&gt;.');
@@ -54,7 +59,7 @@ class TransformContentListener implements ListenerInterface
         // Build a DOMDocument from the input element (including the element itself)
         $sourceDoc = new DOMDocument();
         // To avoid recursive we create new element to don't copy <transform-content> itself
-        $root = $sourceDoc->createElement('document');
+        $root = $sourceDoc->createElement('void');
         $sourceDoc->appendChild($root);
         foreach ($event->input->childNodes as $child) {
             $root->appendChild($sourceDoc->importNode($child, true));
@@ -88,7 +93,8 @@ class TransformContentListener implements ListenerInterface
 
         // Append all child nodes of the result document to the output
         $ownerDoc = $event->output->ownerDocument;
-        foreach ($resultDoc->childNodes as $node) {
+        $strip = $stripRoot ?? $resultDoc->documentElement->localName === 'void';
+        foreach ($strip ? $resultDoc->documentElement->childNodes : $resultDoc->childNodes as $node) {
             $event->output->appendChild($ownerDoc->importNode($node, true));
         }
 
@@ -107,7 +113,7 @@ class TransformContentListener implements ListenerInterface
         $pre = $event->output->ownerDocument->createElement('pre', '');
         $event->output->appendChild($pre); // Ensure output is an element to append to
         $pre->appendChild($event->output->ownerDocument->createTextNode($message));
-        $pre->setAttribute('class', 'transform-content-error error'); 
+        $pre->setAttribute('class', 'transform-content-error error');
         $event->setStatus($event::STATUS_ERROR, strip_tags($message));
     }
 }
