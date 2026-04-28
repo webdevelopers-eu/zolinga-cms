@@ -1,6 +1,6 @@
 {
   "name": "Zolinga CMS",
-  "version": "1.6",
+  "version": "1.6.1",
   "description": "File-based CMS.",
   "authors": [
     "Daniel Sevcik <danny@zolinga.net>"
@@ -29,8 +29,7 @@
       "class": "\\Zolinga\\Cms\\PageServer",
       "method": "onContent",
       "origin": [
-        "remote",
-        "cli"
+        "remote"
       ]
     },
     {
@@ -91,6 +90,24 @@
       "event": "cms:content:transform-content",
       "class": "\\Zolinga\\Cms\\TransformContentListener",
       "method": "onTransformContent",
+      "origin": [
+        "internal"
+      ]
+    },
+    {
+      "description": "Converts Markdown inner content to HTML using Parsedown.",
+      "event": "cms:content:markdown-to-html",
+      "class": "\\Zolinga\\Cms\\MarkdownToHtmlElement",
+      "method": "onMarkdownToHtml",
+      "origin": [
+        "internal"
+      ]
+    },
+    {
+      "description": "Converts HTML inner content to Markdown using XSLT.",
+      "event": "cms:content:html-to-markdown",
+      "class": "\\Zolinga\\Cms\\HtmlToMarkdownElement",
+      "method": "onHtmlToMarkdown",
       "origin": [
         "internal"
       ]

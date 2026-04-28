@@ -85,6 +85,7 @@ class ContentParser implements ServiceInterface
                                 $this->parse($child, false);
                             }
                         } 
+                        $element->remove();
                         break;
                     }
 
