@@ -1,6 +1,6 @@
 {
   "name": "Zolinga CMS",
-  "version": "1.6.1",
+  "version": "1.6.2",
   "description": "File-based CMS.",
   "authors": [
     "Daniel Sevcik <danny@zolinga.net>"
@@ -40,6 +40,11 @@
       "origin": [
         "internal"
       ]
+    },
+    {
+      "description": "Ability to define custom variables in content and replace them using {{VAR:*}} syntax.",
+      "service": "replaceVars",
+      "class": "\\Zolinga\\Cms\\ReplaceVarsListener"
     },
     {
       "description": "Choose random matching nodes from the element content.",
