@@ -92,8 +92,9 @@ class TransformContentListener implements ListenerInterface
         }
 
         // Append all child nodes of the result document to the output
+        // There is no documentElement is output type is text/plain
         $ownerDoc = $event->output->ownerDocument;
-        $strip = $stripRoot ?? $resultDoc->documentElement->localName === 'void';
+        $strip = $stripRoot ?? $resultDoc?->documentElement?->localName === 'void';
         foreach ($strip ? $resultDoc->documentElement->childNodes : $resultDoc->childNodes as $node) {
             $event->output->appendChild($ownerDoc->importNode($node, true));
         }
