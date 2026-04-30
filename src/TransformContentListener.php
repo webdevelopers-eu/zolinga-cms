@@ -67,7 +67,7 @@ class TransformContentListener implements ListenerInterface
 
         // Load the XSLT stylesheet
         $xslDoc = new DOMDocument();
-        $loaded = $xslDoc->load($xsltPath);
+        $loaded = $xslDoc->load($xsltPath, LIBXML_NOENT  | LIBXML_NONET | LIBXML_DTDATTR | LIBXML_NO_XXE | LIBXML_DTDLOAD);
         if (!$loaded) {
             $this->appendError($event, 'Failed to load XSLT template: ' . htmlspecialchars($xsltPath, ENT_XML1));
             return;
