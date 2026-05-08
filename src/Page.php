@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace Zolinga\Cms;
 
-use Zolinga\Cms\Events\ContentElementEvent;
-use DOMAttr, DOMDocument, DOMXPath, DOMNode, DOMElement, Exception, JsonSerializable, Locale, SplFileInfo;
+use \DOMAttr, \DOMDocument, \DOMNode, \DOMElement, \Exception, \JsonSerializable;
+use \Locale, \SplFileInfo, \DOMXPath;
 use const Zolinga\System\ROOT_DIR;
+
+
 /**
  * Represents a page.
  * 
- * @property-read DOMDocument $doc the content of the page as a DOMDocument. Lazily loaded on first use.
+ * @property-read \DOMDocument $doc the content of the page as a \DOMDocument. Lazily loaded on first use.
  * @property-read array<Page> $children the child pages of the page. Lazily loaded on first use.
  * @property-read string $title the title of the page.
  * @property-read string $description the description of the page.
@@ -46,10 +48,10 @@ class Page implements JsonSerializable
      * @var float $priority the priority of the page - float between 0.0000000 and 1.0000000 (exclusive)
      */
     public readonly float $priority;
-    private ?DOMDocument $doc = null;
+    private ?\DOMDocument $doc = null;
 
-    private readonly DOMDocument $fileDoc; // original file document
-    private readonly DOMXPath $fileXPath; // initialized $this->path XPath
+    private readonly \DOMDocument $fileDoc; // original file document
+    private readonly \DOMXPath $fileXPath; // initialized $this->path XPath
 
     /**
      * Array of child pages.
@@ -366,7 +368,12 @@ class Page implements JsonSerializable
             $html
         );
 
-        $doc->loadHTML("<?xml encoding=\"utf-8\" ?>\n".$html, LIBXML_NOERROR | LIBXML_NONET | LIBXML_COMPACT | LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD)
+        // Ensure we parse it as HTML with UTF-8 encoding
+        if (substr($html, 0, strlen(BOM)) !== BOM) {
+            $html = BOM . $html; // prepend BOM if not present to ensure UTF-8 encoding
+        }
+
+        $doc->loadHTML($html, LIBXML_NOERROR | LIBXML_NONET | LIBXML_COMPACT | LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD)
             or throw new Exception("Failed to parse file $file.");
 
         return $doc;
