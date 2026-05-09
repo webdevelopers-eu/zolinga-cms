@@ -62,11 +62,12 @@ class PageServer implements ServiceInterface
         [
             "status" => $redirStatus,
             "basePath" => $basePath,
-            "lang" => $lang
-        ] = $this->langRedirect($event->path);
+            "lang" => $lang,
+            "redir" => $redir
+        ] = $this->langRedirect($event->path, $event->originalPath);
 
         if ($redirStatus) { // redirected
-            $event->setStatus($redirStatus, "Redirecting to the localized page");
+            $event->setStatus($redirStatus, "Redirecting from $event->path (original $event->originalPath) to the localized page $redir");
             $event->preventDefault();
             $event->stopPropagation();
             return;
@@ -83,7 +84,7 @@ class PageServer implements ServiceInterface
                 return;
             }
             $file = 'private://zolinga-cms/pages/404.html';
-            $event->setStatus($event::STATUS_NOT_FOUND, "Page not found");
+            $event->setStatus($event::STATUS_NOT_FOUND, "Page $basePath not found");
         } else {
             $event->setStatus($event::STATUS_OK, "Page served");
         }
@@ -107,27 +108,29 @@ class PageServer implements ServiceInterface
      * @param string $path URL path
      * @return array{status: StatusEnum|null, basePath: string|null, lang: string|null} Status and new path
      */
-    private function langRedirect(string $path): array
+    private function langRedirect(string $path, string $originalPath): array
     {
         global $api;
 
         if (!$this->multilingual) {
-            return ["status" => null, "basePath" => $path, "lang" => null];
+            return ["status" => null, "basePath" => $path, "lang" => null, "redir" => null];
         }
 
         $langs = $api->locale->supportedLangs;
-        $containsLang = preg_match('/^\/(' . implode('|', $langs) . ')(\/|$)/', $path, $match);
-        $lang = $containsLang ? $match[1] : null;
-        $redir = null;
 
-        // Remove lang
-        if (count($langs) == 1 && $containsLang) {
-            $redir = substr($path, 3) ?: '/';
-        } elseif (count($langs) > 1 && !$containsLang) {
-            $redir = '/' . $api->locale->lang . $path;
+        // We take lang from original path because we want to see /en/...
+        ["lang" => $langOriginal, "path" => $pathOriginal] = $this->parseLangFromPath($originalPath);
+
+        if (count($langs) == 1 && $langOriginal) {
+            // Remove lang
+            $redir = $pathOriginal ?: '/';
+        } elseif (count($langs) > 1 && !$langOriginal) {
+            // Add lang
+            $redir = '/' . $api->locale->lang . $originalPath;
         } else {
-            $basePath = $containsLang ? substr($path, 3) : $path;
-            return ["status" => null, "basePath" => $basePath, "lang" => $lang];
+            // OK, no redirection needed
+            ["lang" => $langRewrite, "path" => $pathRewrite] = $this->parseLangFromPath($path);
+            return ["status" => null, "basePath" => $pathRewrite, "lang" => $langRewrite ?: $langOriginal, "redir" => null];
         }
 
         // If it is a search engine bot (does not indicate lang) and there is no cookie, use 
@@ -141,7 +144,18 @@ class PageServer implements ServiceInterface
 
         // Build full url + $redir path
         header("Location: $redir", true, $status->value);
-        return ["status" => $status, "basePath" => null, "lang" => $lang];
+        return ["status" => $status, "basePath" => null, "lang" => $langOriginal, "redir" => $redir];
+    }
+
+    private function parseLangFromPath(string $path): array
+    {
+        global $api;
+
+        $langs = $api->locale->supportedLangs;
+        if (preg_match('/^\/(?<lang>' . implode('|', $langs) . ')(?<path>\/.+)?$/', $path, $match)) {
+            return ["lang" => $match['lang'], "path" => $match['path'] ?? ''];
+        }
+        return ["lang" => null, "path" => $path];
     }
 
     /**
