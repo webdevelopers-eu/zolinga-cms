@@ -33,6 +33,10 @@ See [the full list of dynamic elements](:ref:cms).
 
 The CMS is able to cooperate with [Zolinga Intl](https://github.com/webdevelopers-eu/zolinga-intl) module to provide full translation support. Refere to the Zolinga Intl documentation for more information.
 
+### TRANSLATORS Comments Are Removed
+
+When serving pages to visitors, zolinga-cms automatically removes all HTML comments starting with `TRANSLATORS:`. This is a security feature - these comments may contain sensitive internal information such as translator instructions, marketing context, or legal notes. The comments are preserved in gettext `.pot`/`.po` files during extraction but stripped from the final HTML output.
+
 # Related
 
 - [List of CMS Elements](:ref:cms)
