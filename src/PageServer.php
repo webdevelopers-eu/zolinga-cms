@@ -97,6 +97,15 @@ class PageServer implements ServiceInterface
         // Remove <meta name="cms.template" ...> tags and <void> elements
         $this->stripTag($event->xpath, '//meta[@name="cms.template"]');
         $this->stripTag($event->xpath, '//void');
+        $this->stripTransatorsComments($event->xpath);
+    }
+
+    private function stripTransatorsComments(DOMXPath $xpath): void
+    {
+        $nodes = $xpath->query('//comment()[starts-with(normalize-space(.), "TRANSLATORS:")]');
+        foreach ($nodes as $node) {
+            $node->parentNode->removeChild($node);
+        }
     }
 
     private function stripTag(DOMXPath $xpath, string $selector): void
