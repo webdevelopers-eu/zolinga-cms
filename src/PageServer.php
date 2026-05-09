@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Zolinga\Cms;
 
+use Dom\XPath;
+use DOMXPath;
 use Zolinga\System\Events\{ServiceInterface, ContentEvent};
 use Zolinga\System\Types\StatusEnum;
 use Exception, Locale;
@@ -92,13 +94,19 @@ class PageServer implements ServiceInterface
         $this->currentPage = new Page($file);
         $event->content->appendChild($event->content->importNode($this->currentPage->doc->documentElement, true));
 
-        // Remove <meta name="cms.template" ...> tags
-        $metas = $event->content->getElementsByTagName('meta');
-        for ($i = $metas->length - 1; $i >= 0; $i--) {
-            $meta = $metas->item($i);
-            if ($meta->getAttribute('name') === 'cms.template') {
-                $meta->parentNode->removeChild($meta);
+        // Remove <meta name="cms.template" ...> tags and <void> elements
+        $this->stripTag($event->xpath, '//meta[@name="cms.template"]');
+        $this->stripTag($event->xpath, '//void');
+    }
+
+    private function stripTag(DOMXPath $xpath, string $selector): void
+    {
+        $nodes = $xpath->query($selector);
+        foreach ($nodes as $node) {
+            while ($node->firstChild) {
+                $node->parentNode->insertBefore($node->firstChild, $node);
             }
+            $node->parentNode->removeChild($node);
         }
     }
 
