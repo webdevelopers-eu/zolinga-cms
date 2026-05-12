@@ -32,6 +32,7 @@ class Page implements JsonSerializable
     public readonly ?string $designUrlPath;
     public readonly ?string $layoutFilePath;
     public readonly string $path;
+    public readonly string $localizedPath; // Points to localized version of the master $path if it exists, otherwise to the master $path itself.
     public readonly int $modified;
     private ?string $urlPath = null;
     public readonly ?string $canonical;
@@ -94,6 +95,7 @@ class Page implements JsonSerializable
         }
 
         $this->path = $api->fs->toPath($path);
+        $this->localizedPath = $this->getLocalizedFile($this->path);
 
 
         $this->meta = array_merge(
@@ -110,7 +112,7 @@ class Page implements JsonSerializable
                 'cms_class' => '', // will be copied to <li class> of the menu
                 'cms_canonical' => '', // canonical URL or javascript: scheme
             ],
-            get_meta_tags($path) ?: []
+            get_meta_tags($this->localizedPath) ?: []
         );
 
         if ($this->meta['cms_template']) {
@@ -127,7 +129,7 @@ class Page implements JsonSerializable
         }
 
         // must be after we set $this->design and $this->layout - we replace {{designPath}} in the content
-        $this->fileDoc = $this->fileToDom($this->path);
+        $this->fileDoc = $this->fileToDom($this->localizedPath);
         $this->fileXPath = new DOMXPath($this->fileDoc);
 
         $this->priority = max(0.000001, min(0.999999, (float) ($this->meta['cms_priority'] ?: 0.5)));
