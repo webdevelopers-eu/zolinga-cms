@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Zolinga\Cms;
 
 use \DOMAttr, \DOMDocument, \DOMNode, \DOMElement, \Exception, \JsonSerializable;
-use \Locale, \SplFileInfo, \DOMXPath;
+use \Locale, \DOMXPath;
 use const Zolinga\System\ROOT_DIR;
 
 
@@ -95,7 +95,7 @@ class Page implements JsonSerializable
         }
 
         $this->path = $api->fs->toPath($path);
-        $this->localizedPath = $this->getLocalizedFile($this->path);
+        $this->localizedPath = CmsTools::getLocalizedFile($this->path, $this->lang);
 
 
         $this->meta = array_merge(
@@ -300,43 +300,14 @@ class Page implements JsonSerializable
     }
 
     /**
-     * Return translated version of the file if it exists.
-     *
-     * @param string $file
-     * @return string the path to the translated file or the original file if no translation exists
-     */
-    private function getLocalizedFile(string $file): string
-    {
-        global $api;
-
-        if ($this->lang === false) {
-            return $file;
-        }
-
-        if ($api->serviceExists('locale')) {
-            return $api->locale->getLocalizedFile($file);
-        }
-
-        // Fail over if Zolinga Locale module is not installed
-        $splFile = new SplFileInfo($file);
-        $langFile = $splFile->getPath() . '/' . $splFile->getBasename('.html') . '.' . $this->lang . '.html';
-
-        if (file_exists($langFile)) {
-            return $langFile;
-        }
-
-        return $file;
-    }
-
-    /**
      * Load specified .html template as the main content document into $this->doc
      *
      * @return void
      */
     private function loadTemplate(): void
     {
-        // $templatePath = "public://zolinga-cms/designs/{$this->design}/{$this->layout}.html";
-        if (!file_exists($this->layoutFilePath)) {
+        $localizedLayoutPath = CmsTools::getLocalizedFile($this->layoutFilePath, $this->lang);
+        if (!file_exists($localizedLayoutPath)) {
             throw new Exception("Template not found: {$this->layoutFilePath}.");
         }
 
@@ -358,7 +329,7 @@ class Page implements JsonSerializable
         global $api;
 
         $doc = new DOMDocument;
-        $html = file_get_contents($this->getLocalizedFile($file))
+        $html = file_get_contents(CmsTools::getLocalizedFile($file, $this->lang))
             or throw new Exception("Failed to read file $file.");
 
         // HTML-ENTITIES are deprecated in PHP 8.2        
