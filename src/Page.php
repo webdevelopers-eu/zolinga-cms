@@ -95,7 +95,7 @@ class Page implements JsonSerializable
         }
 
         $this->path = $api->fs->toPath($path);
-        $this->localizedPath = CmsTools::getLocalizedFile($this->path, $this->lang);
+        $this->localizedPath = $api->locale->getLocalizedFile($this->path);
 
 
         $this->meta = array_merge(
@@ -306,7 +306,9 @@ class Page implements JsonSerializable
      */
     private function loadTemplate(): void
     {
-        $localizedLayoutPath = CmsTools::getLocalizedFile($this->layoutFilePath, $this->lang);
+        global $api;
+
+        $localizedLayoutPath = $api->locale->getLocalizedFile($this->layoutFilePath);
         if (!file_exists($localizedLayoutPath)) {
             throw new Exception("Template not found: {$this->layoutFilePath}.");
         }
@@ -329,7 +331,7 @@ class Page implements JsonSerializable
         global $api;
 
         $doc = new DOMDocument;
-        $html = file_get_contents(CmsTools::getLocalizedFile($file, $this->lang))
+        $html = file_get_contents($api->locale->getLocalizedFile($file))
             or throw new Exception("Failed to read file $file.");
 
         // HTML-ENTITIES are deprecated in PHP 8.2        

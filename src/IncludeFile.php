@@ -31,6 +31,7 @@ class IncludeFile implements ListenerInterface {
         if (!is_file($realPath)) {
             throw new \Exception("File is not a file: $path");
         }
+        $realPath = $api->locale->getLocalizedFile($realPath);
 
         $doc = $api->cms->currentPage->fileToDom($realPath);
         $xp = new \DOMXPath($doc);
