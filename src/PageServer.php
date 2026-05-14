@@ -159,6 +159,12 @@ class PageServer implements ServiceInterface
             $status = StatusEnum::TEMPORARY_REDIRECT;
         }
 
+        // Preserve query string (GET parameters) when redirecting
+        $query = $_SERVER['QUERY_STRING'] ?? '';
+        if ($query !== '') {
+            $redir .= '?' . $query;
+        }
+
         // Build full url + $redir path
         header("Location: $redir", true, $status->value);
         return ["status" => $status, "basePath" => null, "lang" => $langOriginal, "redir" => $redir];

@@ -145,6 +145,7 @@ class Page implements JsonSerializable
             $this->meta['cms_title'] ?:
             $this->meta['dc_title'] ?:
             $this->fileXPath->evaluate('string(//title)') ?:
+            // TRANSLATORS: Default page title used when no title metadata or <title> element is provided.
             dgettext('zolinga-cms', 'Untitled Page');
         $this->modified = filemtime($this->path) ?: 0;
         $this->canonical = $this->meta['cms_canonical'] ?: $this->fileXPath->evaluate('string(//link[@rel="canonical"]/@href)') ?: null;

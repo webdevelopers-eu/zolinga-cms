@@ -93,6 +93,7 @@ class ContentParser implements ServiceInterface
                 } elseif ($event->error) {
                     // Something went horibly wrong, exception or something.
                     // Remove the element as it may contain sensitive data.
+                    // TRANSLATORS: Short error message shown in place of a dynamic content element when processing failed.
                     $msg = dgettext("zolinga-cms", "An error occurred while processing dynamic content.");
                     $errElement = $element->ownerDocument->createElement('content-error', htmlspecialchars($msg));
                     foreach(['class' => 'error', 'render' => 'client', 'role' => 'alert', 'aria-live' => 'assertive'] as $attr => $value) {
