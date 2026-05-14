@@ -1,0 +1,20 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: zolinga-cms 1.0\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: cs\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
+
+#. TRANSLATORS: Short error message shown in place of a dynamic content element when processing failed.
+#: /dev/fd/63:97
+msgid "An error occurred while processing dynamic content."
+msgstr "Při zpracování dynamického obsahu došlo k chybě."
+
+#. TRANSLATORS: Default page title used when no title metadata or <title> element is provided.
+#: /dev/fd/59:149
+msgid "Untitled Page"
+msgstr "Nenazvaná stránka"

@@ -1,0 +1,14 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: en\n"
+
+#. TRANSLATORS: Default page title used when no title metadata or <title> element is provided.
+#: /dev/fd/59:149
+msgid "Untitled Page"
+msgstr ""
+
+#. TRANSLATORS: Short error message shown in place of a dynamic content element when processing failed.
+#: /dev/fd/63:97
+msgid "An error occurred while processing dynamic content."
+msgstr ""
