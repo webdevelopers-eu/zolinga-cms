@@ -36,6 +36,18 @@ class Page implements JsonSerializable
     public readonly int $modified;
     private ?string $urlPath = null;
     public readonly ?string $canonical;
+    public string $publishedUrlPath {
+        get {
+            global $api;
+            $url = $this->canonical ?? $this->urlPath ?? '/';
+            if ($api->isMultilingual && !parse_url($url, PHP_URL_SCHEME)) { // only prepend language if it's a relative URL
+                $lang = \Locale::getPrimaryLanguage($this->lang ?: 'en');
+                $url = "/$lang$url";
+                return $url;
+            }
+            return $url;
+        }
+    }
 
     /**
      * Language of the page. If false then no language negotiation is done.
@@ -255,6 +267,8 @@ class Page implements JsonSerializable
 
     private function appendRevParam(): void
     {
+        global $api;
+
         $rev = $this->doc->documentElement->getAttribute('data-revision');
 
         // Excluding web-components.js as it is included also from other modules
@@ -285,6 +299,7 @@ class Page implements JsonSerializable
             } else {
                 $url .= "&rev=$useRev";
             }
+
             $attr->value = $url;
         }
     }
@@ -525,6 +540,7 @@ class Page implements JsonSerializable
             'path' => $api->fs->toZolingaUri($this->path),
             'urlPath' => $this->__get('urlPath'),
             'canonical' => $this->canonical,
+            'publishedUrlPath' => $this->publishedUrlPath,
             'visibility' => $this->visibility,
             'right' => $this->right,
             // 'priority' => $this->priority, already sorted by Page

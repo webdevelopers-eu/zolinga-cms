@@ -73,6 +73,7 @@ class TreeItem
             case 'right':
             case 'canonical':
             case 'classes':
+            case 'publishedUrlPath':
                 return $this->data[$name];
             case 'children':
                 if ($this->children === null) {

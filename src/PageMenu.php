@@ -107,7 +107,7 @@ class PageMenu implements ListenerInterface
 
             /** @var DOMElement $a */
             $a = $li->appendChild($doc->createElement('a'));
-            $a->setAttribute('href', $child->canonical ?? $child->urlPath ?? '/');
+            $a->setAttribute('href', $child->publishedUrlPath);
             $a->textContent = $child->title;
 
             if ($depth > 1 && $child->children) {
