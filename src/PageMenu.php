@@ -44,7 +44,8 @@ class PageMenu implements ListenerInterface
         global $api;
 
         // we need parent pages so we prepend it with $api->cmsTree
-        $breadcrumbs = [$api->cmsTree, ...$api->cmsTree->breadcrumbs($api->cms->currentPage->urlPath)];
+        $breadcrumbPages = $api->cmsTree->breadcrumbs($api->cms->currentPage->urlPath);
+        $breadcrumbs = [$api->cmsTree, ...$breadcrumbPages];
         $level = (int) $event->input->getAttribute('level') ?: 1;
         $depth = (int) $event->input->getAttribute('depth') ?: 1;
         $startPage = $breadcrumbs[$level - 1] ?? null; // $breadcrumbs is 0-based
@@ -68,6 +69,12 @@ class PageMenu implements ListenerInterface
 
         $wrapper = $event->output->ownerDocument->createElement('cms-menu');
         $wrapper->appendChild($menu);
+
+        // Copy over all attributes
+        foreach ($event->input->attributes as $attr) {
+            $wrapper->setAttribute($attr->name, $attr->value);
+        }
+        
         $wrapper->setAttribute('render', 'client');
         $wrapper->setAttribute('hidden', 'true'); // JS hamburger-menu.js removes it 
         foreach(['id', 'class'] as $attr) {

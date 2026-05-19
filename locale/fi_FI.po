@@ -1,0 +1,20 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: v 2.ipdefender.eu\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: fi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#. TRANSLATORS: Short error message shown in place of a dynamic content element when processing failed.
+#: /dev/fd/63:97
+msgid "An error occurred while processing dynamic content."
+msgstr "Tapahtui virhe dynaamisen sisällön käsittelyssä."
+
+#. TRANSLATORS: Default page title used when no title metadata or <title> element is provided.
+#: /dev/fd/59:161
+msgid "Untitled Page"
+msgstr "Nimetön sivu"

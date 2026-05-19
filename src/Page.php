@@ -172,7 +172,8 @@ class Page implements JsonSerializable
                 /** @phpstan-ignore-next-line */
                 if (is_null($this->urlPath)) {
                     $realFile = realpath(basename($this->path) === 'index.html' ? dirname($this->path) : $this->path) ?: '';
-                    $realFile = preg_replace('/\.html$/', '', $realFile);
+                    $re = $api->isMultilingual ? "/(\.{$this->lang}|\.en_US)?\.html$/" : '/\.html$/';
+                    $realFile = preg_replace($re, '', $realFile);
                     $realDir = realpath($api->fs->toPath("private://zolinga-cms/pages")) ?: '';
                     $this->urlPath = str_starts_with($realFile, $realDir) ? (substr($realFile, strlen($realDir)) ?: '/') : false;
                 }
