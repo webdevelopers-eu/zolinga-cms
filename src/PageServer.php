@@ -108,19 +108,20 @@ class PageServer implements ServiceInterface
     {
         global $api;
 
-        $langs = $api->locale->supportedLangs;
-        $re = '/^\/(?<lang>' . implode('|', $langs) . ')(?=\/|$)/';
-        $path = preg_replace($re, '', $path);
         $head = $doc->getElementsByTagName('head')->item(0) 
             or throw new \Exception('The page does not have a <head> element.');
+        $localized = $api->locale->getLocalizedUrls($path);
+        $count = 0;
 
-        foreach ($langs as $lang) {
-            $url = $api->url->resolveUrl('/' . $lang . $path);
+        foreach ($localized as $locale => $url) {
+            $lang = \Locale::getPrimaryLanguage($locale);
+            $url = $api->url->resolveUrl($url);
             $this->createAlternateLangElement($head, $lang, $url);
+
+            if (!$count++) { // default language
+                $this->createAlternateLangElement($head, 'x-default', $url);
+            }
         }
-        // Default
-        $url = $api->url->resolveUrl('/' . reset($langs) . $path);
-        $this->createAlternateLangElement($head, 'x-default', $url);
     }
 
     private function createAlternateLangElement(DOMElement $head, string $lang, string $url): DOMElement
