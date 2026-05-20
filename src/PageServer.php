@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Zolinga\Cms;
 
 use Dom\XPath;
+use DOMDocument;
+use DOMElement;
 use DOMXPath;
 use Zolinga\System\Events\{ServiceInterface, ContentEvent};
 use Zolinga\System\Types\StatusEnum;
@@ -22,13 +24,10 @@ class PageServer implements ServiceInterface
 {
     private string $basePath;
     private ?Page $currentPage = null;
-    private readonly bool $multilingual;
 
     public function __construct()
     {
         global $api;
-
-        $this->multilingual = $api->serviceExists('locale');
 
         $this->basePath = (string) realpath($api->fs->toPath('private://zolinga-cms/pages'))
             or throw new Exception('The private://zolinga-cms/pages directory does not exist.');
@@ -98,7 +97,43 @@ class PageServer implements ServiceInterface
         $this->stripTag($event->xpath, '//meta[@name="cms.template"]');
         $this->stripTag($event->xpath, '//void');
         $this->stripTransatorsComments($event->xpath);
+
+        // Add multilingual support if needed
+        if ($api->isMultilingual) {
+            $this->addAlternateLangLinks($event->content, $event->path);
+        }
     }
+
+    private function addAlternateLangLinks(DOMDocument $doc, string $path): void
+    {
+        global $api;
+
+        $langs = $api->locale->supportedLangs;
+        $re = '/^\/(?<lang>' . implode('|', $langs) . ')(\/|$)/';
+        $path = preg_replace($re, '', $path);
+        $head = $doc->getElementsByTagName('head')->item(0) 
+            or throw new \Exception('The page does not have a <head> element.');
+
+        foreach ($langs as $lang) {
+            $url = $api->url->resolveUrl('/' . $lang . $path);
+            $this->createAlternateLangElement($head, $lang, $url);
+        }
+        // Default
+        $url = $api->url->resolveUrl('/' . reset($langs) . $path);
+        $this->createAlternateLangElement($head, 'x-default', $url);
+    }
+
+    private function createAlternateLangElement(DOMElement $head, string $lang, string $url): DOMElement
+    {
+        $link = $head->ownerDocument->createElement('link');
+        $link->setAttribute('rel', 'alternate');
+        $link->setAttribute('hreflang', $lang);
+        $link->setAttribute('href', $url);
+        $link->setAttribute('append-to', 'html-head');
+        $head->appendChild($link);
+        return $link;
+    }
+
 
     private function stripTransatorsComments(DOMXPath $xpath): void
     {
@@ -129,7 +164,7 @@ class PageServer implements ServiceInterface
     {
         global $api;
 
-        if (!$this->multilingual) {
+        if (!$api->isMultilingual) {
             return ["status" => null, "basePath" => $path, "lang" => null, "redir" => null];
         }
 
@@ -211,7 +246,7 @@ class PageServer implements ServiceInterface
         }
 
         // For multilingual support we require Zolinga Intl module
-        if ($this->multilingual) {
+        if ($api->isMultilingual) {
             return $api->locale->getLocalizedFile($realPath);
         }
 
