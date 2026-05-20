@@ -109,7 +109,7 @@ class PageServer implements ServiceInterface
         global $api;
 
         $langs = $api->locale->supportedLangs;
-        $re = '/^\/(?<lang>' . implode('|', $langs) . ')(\/|$)/';
+        $re = '/^\/(?<lang>' . implode('|', $langs) . ')(?=\/|$)/';
         $path = preg_replace($re, '', $path);
         $head = $doc->getElementsByTagName('head')->item(0) 
             or throw new \Exception('The page does not have a <head> element.');
