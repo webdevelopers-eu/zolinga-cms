@@ -100,7 +100,7 @@ class PageServer implements ServiceInterface
 
         // Add multilingual support if needed
         if ($api->isMultilingual) {
-            $this->addAlternateLangLinks($event->content, $event->path);
+            $this->addAlternateLangLinks($event->content, $event->originalPath);
         }
     }
 
