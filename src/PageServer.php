@@ -192,7 +192,7 @@ class PageServer implements ServiceInterface
         if (empty($_COOKIE['lang']) && empty($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
             $status = StatusEnum::MOVED_PERMANENTLY;
         } else {
-            $status = StatusEnum::TEMPORARY_REDIRECT;
+            $status = StatusEnum::FOUND;
         }
 
         // Preserve query string (GET parameters) when redirecting
@@ -203,6 +203,7 @@ class PageServer implements ServiceInterface
 
         // Build full url + $redir path
         header("Location: $redir", true, $status->value);
+        header("Vary: Accept-Language", false);
         return ["status" => $status, "basePath" => null, "lang" => $langOriginal, "redir" => $redir];
     }
 
