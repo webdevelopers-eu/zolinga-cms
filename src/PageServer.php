@@ -189,11 +189,11 @@ class PageServer implements ServiceInterface
         // If it is a search engine bot (does not indicate lang) and there is no cookie, use 
         // 301 - does not maintain method, 308 keeps POST being a POST.
         // Since requests were probably already processed, we need 301
-        if (empty($_COOKIE['lang']) && empty($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
-            $status = StatusEnum::MOVED_PERMANENTLY;
-        } else {
-            $status = StatusEnum::FOUND;
-        }
+        // if (empty($_COOKIE['lang']) && empty($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
+        //     $status = StatusEnum::MOVED_PERMANENTLY;
+        // } else {
+        $status = StatusEnum::FOUND;
+        // }
 
         // Preserve query string (GET parameters) when redirecting
         $query = $_SERVER['QUERY_STRING'] ?? '';
