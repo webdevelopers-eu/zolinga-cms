@@ -74,6 +74,8 @@ class PageServer implements ServiceInterface
             return;
         }
 
+        $event->path = $basePath;
+
         if ($lang) {
             $api->locale->lang = $lang;
         }
@@ -100,17 +102,28 @@ class PageServer implements ServiceInterface
 
         // Add multilingual support if needed
         if ($api->isMultilingual) {
-            $this->addAlternateLangLinks($event->content, $event->originalPath);
+            $this->addAlternateLangLinks($event->xpath, $event->content, $event->originalPath);
         }
     }
 
-    private function addAlternateLangLinks(DOMDocument $doc, string $path): void
+    private function addAlternateLangLinks(DOMXPath $xpath, DOMDocument $doc, string $path): void
     {
         global $api;
 
+        $localized = $api->locale->getLocalizedUrls($path);
         $head = $doc->getElementsByTagName('head')->item(0) 
             or throw new \Exception('The page does not have a <head> element.');
-        $localized = $api->locale->getLocalizedUrls($path);
+
+        // Check if canonical tag exists, if not, add it. Useful when serving multilingual site's "/" with a default language without redirection.
+        if (!$xpath->evaluate('boolean(//link[@rel="canonical"])')) {
+            $currentPath = $localized[$api->locale->locale] ?? $path;
+            $canonicalEl = $doc->createElement('link');
+            $canonicalEl->setAttribute('rel', 'canonical');
+            $canonicalEl->setAttribute('href', $api->url->resolveUrl($currentPath));
+            $canonicalEl->setAttribute('lang', $api->locale->lang);
+            $head->appendChild($canonicalEl);
+        }
+        
         $count = 0;
 
         foreach ($localized as $locale => $url) {
@@ -158,6 +171,11 @@ class PageServer implements ServiceInterface
     /**
      * Redirect to the localized page if the current page is not localized.
      * 
+     * For optimal SEO, redirect only HTTP to HTTPS with a permanent 301 redirect. 
+     * Do not automatically redirect visitors from "/" to a language specific URL based on Accept-Language or IP address. 
+     * Instead, serve either a default language or a language selection page at "/", and expose localized versions through hreflang tags and sitemap entries. 
+     * If the destination varies by user preferences, avoid automatic redirects because they can reduce search engine indexability.
+     * 
      * @param string $path URL path
      * @return array{status: StatusEnum|null, basePath: string|null, lang: string|null} Status and new path
      */
@@ -180,20 +198,15 @@ class PageServer implements ServiceInterface
         } elseif (count($langs) > 1 && !$langOriginal) {
             // Add lang
             $redir = '/' . $api->locale->lang . $originalPath;
+            // We don't want to redirect - for SE the <meta> alternative/hreflang should do the job.
+            return ["status" => null, "basePath" => $pathOriginal, "lang" => $api->locale->lang, "redir" => null];
         } else {
             // OK, no redirection needed
             ["lang" => $langRewrite, "path" => $pathRewrite] = $this->parseLangFromPath($path);
             return ["status" => null, "basePath" => $pathRewrite, "lang" => $langRewrite ?: $langOriginal, "redir" => null];
         }
 
-        // If it is a search engine bot (does not indicate lang) and there is no cookie, use 
-        // 301 - does not maintain method, 308 keeps POST being a POST.
-        // Since requests were probably already processed, we need 301
-        // if (empty($_COOKIE['lang']) && empty($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
-        //     $status = StatusEnum::MOVED_PERMANENTLY;
-        // } else {
         $status = StatusEnum::FOUND;
-        // }
 
         // Preserve query string (GET parameters) when redirecting
         $query = $_SERVER['QUERY_STRING'] ?? '';
