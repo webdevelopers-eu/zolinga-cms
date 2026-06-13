@@ -115,12 +115,13 @@ class PageServer implements ServiceInterface
             or throw new \Exception('The page does not have a <head> element.');
 
         // Check if canonical tag exists, if not, add it. Useful when serving multilingual site's "/" with a default language without redirection.
+        // Create <link rel="canonical" href="https://example.com/en/" lang="en" /> if it doesn't exist
         if (!$xpath->evaluate('boolean(//link[@rel="canonical"])')) {
             $currentPath = $localized[$api->locale->locale] ?? $path;
             $canonicalEl = $doc->createElement('link');
-            $canonicalEl->setAttribute('rel', 'canonical');
+            $canonicalEl->setAttribute('rel', "canonical");
             $canonicalEl->setAttribute('href', $api->url->resolveUrl($currentPath));
-            $canonicalEl->setAttribute('lang', $api->locale->lang);
+            $canonicalEl->setAttribute('hreflang', $api->locale->lang);
             $head->appendChild($canonicalEl);
         }
         

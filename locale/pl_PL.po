@@ -11,11 +11,9 @@ msgstr ""
 "|| n%100>=20) ? 1 : 2);\n"
 
 #. TRANSLATORS: Short error message shown in place of a dynamic content element when processing failed.
-#: /dev/fd/63:97
 msgid "An error occurred while processing dynamic content."
 msgstr "Wystąpił błąd podczas przetwarzania treści dynamicznych."
 
 #. TRANSLATORS: Default page title used when no title metadata or <title> element is provided.
-#: /dev/fd/59:161
 msgid "Untitled Page"
 msgstr "Strona bez tytułu"
