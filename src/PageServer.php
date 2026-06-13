@@ -191,34 +191,28 @@ class PageServer implements ServiceInterface
         $langs = $api->locale->supportedLangs;
 
         // We take lang from original path because we want to see /en/...
-        ["lang" => $langOriginal, "path" => $pathOriginal] = $this->parseLangFromPath($originalPath);
+        ["lang" => $origLang, "path" => $origPath] = $this->parseLangFromPath($originalPath);
+        ["lang" => $lang, "path" => $pathPart] = $this->parseLangFromPath($path);
 
-        if (count($langs) == 1 && $langOriginal) {
-            // Remove lang
-            $redir = $pathOriginal ?: '/';
-        } elseif (count($langs) > 1 && !$langOriginal) {
-            // Add lang
-            $redir = '/' . $api->locale->lang . $originalPath;
-            // We don't want to redirect - for SE the <meta> alternative/hreflang should do the job.
-            return ["status" => null, "basePath" => $pathOriginal, "lang" => $api->locale->lang, "redir" => null];
-        } else {
-            // OK, no redirection needed
-            ["lang" => $langRewrite, "path" => $pathRewrite] = $this->parseLangFromPath($path);
-            return ["status" => null, "basePath" => $pathRewrite, "lang" => $langRewrite ?: $langOriginal, "redir" => null];
+        if (count($langs) == 1 && $origLang) {
+            // Remove lang & redirect to the non-lang URL
+            $redir = $api->url->resolveUrl($origPath ?: '/');
+            $status = StatusEnum::FOUND;
+
+            // Preserve query string (GET parameters) when redirecting
+            $query = $_SERVER['QUERY_STRING'] ?? '';
+            if ($query !== '') {
+                $redir .= '?' . $query;
+            }
+
+            header("Location: $redir", true, $status->value);
+            // header("Vary: Accept-Language", false);
+            return ["status" => $status, "basePath" => null, "lang" => $origLang, "redir" => $redir];
         }
-
-        $status = StatusEnum::FOUND;
-
-        // Preserve query string (GET parameters) when redirecting
-        $query = $_SERVER['QUERY_STRING'] ?? '';
-        if ($query !== '') {
-            $redir .= '?' . $query;
-        }
-
-        // Build full url + $redir path
-        header("Location: $redir", true, $status->value);
-        header("Vary: Accept-Language", false);
-        return ["status" => $status, "basePath" => null, "lang" => $langOriginal, "redir" => $redir];
+        
+        // We don't want to redirect - for SE the <meta> alternative/hreflang should do the job.
+        $lang = $lang ?: $origLang ?: $api->locale->lang;
+        return ["status" => null, "basePath" => $path, "lang" => $lang, "redir" => null];
     }
 
     private function parseLangFromPath(string $path): array
