@@ -212,7 +212,7 @@ class PageServer implements ServiceInterface
         
         // We don't want to redirect - for SE the <meta> alternative/hreflang should do the job.
         $lang = $lang ?: $origLang ?: $api->locale->lang;
-        return ["status" => null, "basePath" => $path, "lang" => $lang, "redir" => null];
+        return ["status" => null, "basePath" => $pathPart, "lang" => $lang, "redir" => null];
     }
 
     private function parseLangFromPath(string $path): array
