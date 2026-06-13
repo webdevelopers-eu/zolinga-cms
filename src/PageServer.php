@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Zolinga\Cms;
 
-use Dom\XPath;
 use DOMDocument;
 use DOMElement;
 use DOMXPath;
 use Zolinga\System\Events\{ServiceInterface, ContentEvent};
 use Zolinga\System\Types\StatusEnum;
-use Exception, Locale;
+use Exception;
+use Locale;
 
 /**
  * Serves the pages.
