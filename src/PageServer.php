@@ -7,10 +7,11 @@ namespace Zolinga\Cms;
 use DOMDocument;
 use DOMElement;
 use DOMXPath;
-use Zolinga\System\Events\{ServiceInterface, ContentEvent};
+use Zolinga\System\Events\ServiceInterface;
 use Zolinga\System\Types\StatusEnum;
 use Exception;
 use Locale;
+use Zolinga\System\Events\Content\HtmlContentEvent;
 
 /**
  * Serves the pages.
@@ -38,7 +39,7 @@ class PageServer implements ServiceInterface
         switch ($name) {
             case 'currentPage':
                 if (!$this->currentPage) {
-                    throw new Exception('The current page is not initialized yet. Please wait for the content event "system:content" to be served.', 404);
+                    throw new Exception('The current page is not initialized yet. Please wait for the content event "system:content:html" to be served.', 404);
                 }
                 return $this->currentPage;
             default:
@@ -49,10 +50,10 @@ class PageServer implements ServiceInterface
     /**
      * Request event listener to ?acme=... POST/GET requests 
      * 
-     * @param ContentEvent $event
+     * @param HtmlContentEvent $event
      * @return void
      */
-    public function onContent(ContentEvent $event): void
+    public function onContent(HtmlContentEvent $event): void
     {
         global $api;
 

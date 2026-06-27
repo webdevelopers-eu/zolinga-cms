@@ -25,7 +25,7 @@
     },
     {
       "description": "CMS server.",
-      "event": "system:content",
+      "event": "system:content:html",
       "class": "\\Zolinga\\Cms\\PageServer",
       "method": "onContent",
       "origin": [

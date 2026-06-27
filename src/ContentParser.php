@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace Zolinga\Cms;
 
-use Zolinga\System\Events\{ServiceInterface, ContentEvent};
-use Zolinga\System\Types\StatusEnum;
-use Exception, Locale;
-use DOMElement, DOMDocument, DOMDocumentFragment, DOMXPath;
+use DOMElement;
+use DOMXPath;
+use Zolinga\System\Events\ServiceInterface;
 use Zolinga\Cms\Events\ContentElementEvent;
 
 /**
