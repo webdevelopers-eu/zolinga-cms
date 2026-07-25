@@ -4,19 +4,21 @@ declare(strict_types=1);
 
 namespace Zolinga\Cms\Tree;
 
+use Zolinga\Cms\Page;
+
 /**
  * Represents a single menu item in the tree.
  * 
- * @template TTreeDef as array{title: string, description: string, path: string, urlPath: string, visibility: string, right: string, modified: int, classes: array<string>, children: array<mixed>}
+ * @template TTreeDef as array{title: string, description: string, path: string, urlPath: string, visibility: string, right: string, modified: int, classes: array<string>, mcpResources: array<string>, children: array<mixed>}
  * 
- * @property-read string $title
- * @property-read string $description
- * @property-read string $path
- * @property-read string $urlPath
- * @property-read string $visibility
- * @property-read string $right
- * @property-read string $classes
- * @property-read array<mixed> $children
+ * @property-read string $title the display title of the page
+ * @property-read string $description the short description/summary of the page
+ * @property-read string $path the filesystem path to the .html page file (e.g. /var/www/.../pages/foo/index.html)
+ * @property-read string $urlPath the URL path of the page relative to the site root (e.g. /foo), derived from $path
+ * @property-read string $visibility whether the page is shown in menus: 'visible' or 'hidden'
+ * @property-read string $right the access right required to view the page, or false if none
+ * @property-read string $classes CSS classes for the menu item element
+ * @property-read array<mixed> $children the child pages of this menu item
  * 
  * @author Daniel Sevcik <danny@zolinga.net>
  * @data 2024-03-27
@@ -115,6 +117,38 @@ class TreeItem
         }
 
         return [];
+    }
+
+    /**
+     * Recursively walk the subtree rooted at this item and yield all TreeItem nodes.
+     *
+     * @return \Generator<TreeItem<TTreeDef>>
+     */
+    public function walkTree(): \Generator
+    {
+        yield $this;
+        foreach ($this->__get('children') as $child) {
+            yield from $child->walkTree();
+        }
+    }
+
+    /**
+     * Find a TreeItem in the subtree by its URL path.
+     *
+     * @param string $urlPath the URL path to search for (e.g. /about)
+     * @return TreeItem<TTreeDef>|null
+     */
+    public function findByPath(string $urlPath): ?TreeItem
+    {
+        $normalized = '/' . trim($urlPath, '/');
+
+        foreach ($this->walkTree() as $item) {
+            if ($item->urlPath === $normalized) {
+                return $item;
+            }
+        }
+
+        return null;
     }
 
     public function __toString()
