@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.6.6] - 2026-08-29
+
+### Fixed
+- Menu cache now flushes when a page file is newer than the cached tree. Previously the flush ran during `$api->cmsTree` construction and never deleted the stale files, so every request logged a warning and kept serving the old menu.
+
 ## [1.6.5] - 2026-05-09
 
 ### Fixed

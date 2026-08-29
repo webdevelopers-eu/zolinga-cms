@@ -87,34 +87,4 @@ class TreeRoot extends TreeItem implements ServiceInterface
 
         $api->log->warning("zolinga-cms", "Zolinga CMS: Menu cache is disabled, if the server is live enable it in the configuration file.");
     }
-
-    /**
-     * Flush the generated menu structure cache.
-     *
-     * @return int The number of cache files deleted.
-     * @throws \RuntimeException If the cache files cannot be deleted.
-     */
-    public function flushCache(): int
-    {
-        global $api;
-
-        $filePath = $api->fs->toPath('private://zolinga-cms/');
-        $pattern = "{$filePath}/menu.cache.*.json";
-        $files = glob($pattern) ?: [];
-
-        if (empty($files)) {
-            $api->log?->info("zolinga-cms", "No menu cache files found to flush: {$pattern}");
-            return 0;
-        }
-
-        $api->log?->info("zolinga-cms", "Flushing menu cache files: " . implode(", ", $files));
-        // Delete all cache files
-        foreach ($files as $file) {
-            $api->log?->info("zolinga-cms", "Flushing menu cache file: $file");
-            unlink($file)
-                or throw new \RuntimeException("Zolinga CMS: Failed to delete menu cache file $file.");
-        }
-
-        return count($files);
-    }
 }

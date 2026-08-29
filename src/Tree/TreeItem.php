@@ -57,10 +57,37 @@ class TreeItem
         $previous = $this->data['modified'] ?? 0;
         if (!$modified || $previous !== $modified) {
             $api->log?->info("zolinga-cms", "Menu cache file {$this->data['path']} has been modified on " . date('c', $modified) . " (previous modification " . date('c', $previous) . "). Flushing cache.");
-            if (!$api->serviceExists('cmsTree') || !is_int($api->cmsTree?->flushCache())) {
-                $api->log?->warning("zolinga-cms", "Failed to flush menu cache. \$api->cmsTree is not available or does not implement flushCache().");
-            }
+            $this->flushCache();
         }
+    }
+
+    /**
+     * Delete menu.cache.*.json files so the next request rebuilds the tree.
+     *
+     * Must run on $this: this constructor also runs while TreeRoot (cmsTree) is still being created.
+     *
+     * @return int Number of cache files deleted.
+     */
+    public function flushCache(): int
+    {
+        global $api;
+
+        $filePath = $api->fs->toPath('private://zolinga-cms/');
+        $pattern = "{$filePath}/menu.cache.*.json";
+        $files = glob($pattern) ?: [];
+        if (!$files) {
+            $api->log?->info("zolinga-cms", "No menu cache files found to flush: {$pattern}");
+            return 0;
+        }
+
+        $api->log?->info("zolinga-cms", "Flushing menu cache files: " . implode(", ", $files));
+        foreach ($files as $file) {
+            $api->log?->info("zolinga-cms", "Flushing menu cache file: $file");
+            unlink($file)
+                or throw new \RuntimeException("Zolinga CMS: Failed to delete menu cache file $file.");
+        }
+
+        return count($files);
     }
 
     public function __get(string $name): mixed
