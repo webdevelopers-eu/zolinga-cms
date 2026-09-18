@@ -42,7 +42,7 @@ class Page implements JsonSerializable
             $url = $this->canonical ?? $this->urlPath ?? '/';
             if ($api->isMultilingual && !parse_url($url, PHP_URL_SCHEME)) { // only prepend language if it's a relative URL
                 $lang = \Locale::getPrimaryLanguage($this->lang ?: 'en');
-                $url = "/$lang$url";
+                $url = rtrim("/$lang$url", '/');
                 return $url;
             }
             return $url;
