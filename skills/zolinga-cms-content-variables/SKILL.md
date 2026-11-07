@@ -20,7 +20,8 @@ argument-hint: "[page or template path]"
 3. Prefer `{{designPath}}/css/...`, `{{designPath}}/img/...`, and similar paths instead of hardcoded `/dist/<module>/design/...` URLs.
 4. Use `{{lang}}` or `{{locale}}` for language-specific links or asset variants when needed.
 5. Use `{{revHash}}` only when cache busting is needed for static asset URLs.
-6. Keep replacements limited to CMS-rendered HTML files; do not apply these variables inside arbitrary JavaScript or PHP unless the content is passed through the CMS variable replacement flow.
+6. Use `{{domain}}` for absolute URLs instead of hardcoding the site host name.
+7. Keep replacements limited to CMS-rendered HTML files; do not apply these variables inside arbitrary JavaScript or PHP unless the content is passed through the CMS variable replacement flow.
 
 ## Common Patterns
 
@@ -29,6 +30,7 @@ argument-hint: "[page or template path]"
 <img src="{{designPath}}/img/hero.webp" alt="" />
 <a href="/{{lang}}/register">Register</a>
 <script src="{{designPath}}/app.js?v={{revHash}}"></script>
+<code>https://{{domain}}/mcp</code>
 ```
 
 ## References

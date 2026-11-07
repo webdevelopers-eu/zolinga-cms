@@ -339,6 +339,7 @@ class Page implements JsonSerializable
      * 
      * - language negotiate the file if translation exists
      * - replace {{designPath}} with the path to the $this->designUrlPath
+     * - replace {{domain}} with the host name from the baseURL config
      *
      * @param string $file
      * @return DOMDocument
@@ -354,9 +355,10 @@ class Page implements JsonSerializable
         // HTML-ENTITIES are deprecated in PHP 8.2        
         // $html = mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8');
 
+        $domain = parse_url($api->config['baseURL'], PHP_URL_HOST);
         $html = str_replace(
-            ['{{designPath}}', '{{locale}}', '{{lang}}', '{{revHash}}'],
-            [$this->designUrlPath, $this->lang ?: 'en-US', Locale::getPrimaryLanguage($this->lang ?: 'en'), $api->manifest->revHash],
+            ['{{designPath}}', '{{locale}}', '{{lang}}', '{{revHash}}', '{{domain}}'],
+            [$this->designUrlPath, $this->lang ?: 'en-US', Locale::getPrimaryLanguage($this->lang ?: 'en'), $api->manifest->revHash, $domain],
             $html
         );
 

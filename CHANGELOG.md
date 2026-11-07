@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.7.0] - 2026-11-07
+
+### Added
+- New `{{domain}}` content variable. It is replaced with the host name from the `baseURL` configuration, so page content and templates can build absolute links such as `https://{{domain}}/mcp` without hardcoding the domain.
+
+### Fixed
+- The language prefix in the published URL of a page no longer keeps a trailing slash for the site root.
+- The `<html-to-markdown>` and `<markdown-to-html>` elements now use the `markdown` service.
+
 ## [1.6.6] - 2026-08-29
 
 ### Fixed

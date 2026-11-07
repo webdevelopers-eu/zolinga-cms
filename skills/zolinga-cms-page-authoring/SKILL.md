@@ -57,6 +57,7 @@ Available in both templates and page `.html` files (string-replaced before DOM p
 | `{{locale}}` | Full locale code | `en-US` |
 | `{{lang}}` | Primary language code | `en` |
 | `{{revHash}}` | Revision hash from all zolinga.json files (cache busting) | `a3f2b1c` |
+| `{{domain}}` | Host name from the `baseURL` configuration | `www.example.com` |
 
 Usage: `<link rel="stylesheet" href="{{designPath}}/css/style.css" />` or `<a href="/{{lang}}/register">`
 
