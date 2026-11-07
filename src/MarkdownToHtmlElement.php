@@ -31,7 +31,7 @@ class MarkdownToHtmlElement implements ListenerInterface
         global $api;
 
         $markdown = $this->extractMarkdown($event);
-        $html = $api->convert->markdownToHtml($markdown);
+        $html = $api->markdown->markdownToHtml($markdown);
 
         $event->output->appendXML($html);
         $event->setStatus($event::STATUS_OK, 'Markdown converted to HTML.');

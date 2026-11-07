@@ -43,7 +43,7 @@ class HtmlToMarkdownElement implements ListenerInterface
             $body->append($doc->importNode($child, true));
         }
 
-        $markdown = $api->convert->htmlToMarkdown($doc);
+        $markdown = $api->markdown->htmlToMarkdown($doc);
 
         if ($markdown !== null) {
             $pre = $event->output->ownerDocument->createElement('pre');

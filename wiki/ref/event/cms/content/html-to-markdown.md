@@ -1,6 +1,6 @@
 # HTML to Markdown
 
-The `<html-to-markdown>` tag converts HTML content inside the element to Markdown using the XSLT-based converter from `$api->convert->htmlToMarkdown()`.
+The `<html-to-markdown>` tag converts HTML content inside the element to Markdown using the XSLT-based converter from `$api->markdown->htmlToMarkdown()`.
 
 ## Usage
 
